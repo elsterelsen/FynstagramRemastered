@@ -63,6 +63,9 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
     //zähler für 2.tick routine;
     public int tickCounter;
 
+    //Collision
+    private String lastCollisionID="-1";
+
 
     public SPIEL() {
         super(MAIN.x, MAIN.y, "Fynstagram 2020");//windowsize kann nicht mit variable gemacht werden.
@@ -252,10 +255,22 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
                     ActivePlayer.standStill();
                 }
             }
+
+
             if (NpcController2.checkForCollision(ActivePlayer) && !DialogController.isActive()) {
                 String npcID = NpcController2.getCollidingNPC(ActivePlayer);
                 System.out.println("Der Spieler schneidet den NPC mit der ID: " + npcID);
+                NpcController2.getNPC2(npcID).setTalkAbleState(true);
+                lastCollisionID=npcID;
+                if(tasteGedrueckt(Taste.LEERTASTE)||tasteGedrueckt(Taste.ENTER)){
                 DialogController.startDialog(npcID);
+                }
+            }
+            else {
+                //wenn keine Collision stattfindet wird Ansprechbar-zustand vom letzten Kollidierten NPC auf false gesetzt
+                if(NpcController2.getNPC2(lastCollisionID)!=null){
+                    NpcController2.getNPC2(lastCollisionID).setTalkAbleState(false);
+                }
             }
 
             gamesaver.SavePlayer(ActivePlayer);

@@ -334,5 +334,8 @@ public class NpcController2 extends Knoten {
         }
 
     }
-
+    public NPC2 getNPC2(String npcID){
+        if(!NPCs.containsKey(npcID)){return null;}
+        return NPCs.get(npcID);
+    }
 }

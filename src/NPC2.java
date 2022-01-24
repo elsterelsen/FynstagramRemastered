@@ -18,10 +18,12 @@ public class NPC2 extends Knoten {
     private Bild img;
 
 
-    private final String highlighterPath = "./Assets/NPCs/highLight.png";
-    private final String specialBedHighlighterPath = "./Assets/NPCs/highLightBed.png";
+    private static final String highlighterPath = "./Assets/NPCs/highLight.png";
+    private static final String specialBedHighlighterPath = "./Assets/NPCs/highLightBed.png";
+    private static final String specialTalkAbleHighlighterPath = "./Assets/NPCs/SprechblaseEnter.png";
 
     private final Bild highLightImg;
+    private final Bild talkAbleImg;
     private boolean highlightState = true;
 
     @Expose
@@ -62,11 +64,15 @@ public class NPC2 extends Knoten {
         }
         if(name.equals("zzz")){
             highLightImg = new Bild(posX, posY, specialBedHighlighterPath);
+            talkAbleImg = new Bild(posX, posY, specialTalkAbleHighlighterPath);
         } else{
             highLightImg = new Bild(posX+2, posY-50, highlighterPath);
+            talkAbleImg = new Bild(posX+2, posY-50, specialTalkAbleHighlighterPath);
         }
         this.add(highLightImg); //wird beim highLighten gemacht
         this.add(img);
+        this.add(talkAbleImg);
+        talkAbleImg.sichtbarSetzen(false);
 
 
     }
@@ -147,6 +153,11 @@ public class NPC2 extends Knoten {
     public void setHighlightState(boolean h){
         highlightState = h;
         highLightImg.sichtbarSetzen(highlightState);
+    }
+
+    public void setTalkAbleState(boolean h){
+        //setze ob man in Sprechreichweite zu diesem Npc ist
+        talkAbleImg.sichtbarSetzen(h);
     }
 
     @Override
