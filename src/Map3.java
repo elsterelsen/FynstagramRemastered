@@ -40,7 +40,7 @@ public class Map3 extends Knoten {
 
 
     private String defaultPath = "./Assets/Houses/"; //Basis-Pfad für alle interiorPics
-    private String pathHitboxImg = "./Assets/Map/Map3_coll.png";
+    private String pathHitboxImg = "./Assets/Map/Map4_coll.png";
     private String pathMainImg = "./Assets/Map/";
     private String pathBackgroundImg = "./Assets/Tests/blur.png";
 
