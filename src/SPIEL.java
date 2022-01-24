@@ -67,7 +67,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
     public SPIEL() {
         super(MAIN.x, MAIN.y, "Fynstagram 2020");//windowsize kann nicht mit variable gemacht werden.
 
-        Tracker.sendEventAsync(Collections.singletonMap("type", "starteSpiel"));
+        //Tracker.sendEventAsync(Collections.singletonMap("type", "starteSpiel"));
         soundController = new SoundController();
         soundController.startTitleMusic();
         StartSc = new StartingScreen();
