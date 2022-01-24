@@ -53,6 +53,7 @@ public class Map3 extends Knoten {
     private ImageCollider[] houseHitbox;
     private Bild[] houseImgs; //Anzeigebilder der Innenraüme
     private int[] RedColorCodes; // Array mit allen HäuserRedCodes;
+    private int blueColorCode; //Code für Haus exit
     private int[][] intSpawnPos; //da wo der Spieler im Inneren, wenn er durch die Tür geht spawnt ->s. JSON Template-Klasse(Haus) //[i][0] = x | [i][1] = y
     private boolean[] defaultLock; //->s. JSON Template-Klasse(Haus)
 
@@ -304,7 +305,7 @@ public class Map3 extends Knoten {
                     return false;
                 }
             } else {
-                // er halt also eine Farbe besucht
+                // er hat also eine Farbe besucht
                 int match = -1;
                 //System.out.println(numberofB);
                 for (int i = 0; i < numberofB; i++) {

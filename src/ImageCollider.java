@@ -12,7 +12,7 @@ class ImageCollider extends Knoten {
 
     private String ImgPath = "./Assets/Tests/coll2.png";
     private int PlayerW = 48;
-    private int PlayerH = 90;
+    private int PlayerH = 15;
 
 
     private int offsetX;
@@ -273,7 +273,7 @@ class ImageCollider extends Knoten {
         int playerX = dp.positionX();
         int playerY = dp.positionY();
         playerX = playerX - offsetX;
-        playerY = playerY - offsetY;
+        playerY = playerY -offsetY + 70;
         //System.out.println("Sucht von LO Corr: " + ObjectX + ", " + ObjectY);
 
 
