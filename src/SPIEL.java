@@ -192,9 +192,22 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
         //System.out.println("FOKUS SETZEN");
         if(map==null)return;
         if(!insideHousing) {
+            //Set Fokus on Player if outside
             cam.fokusSetzen(ActivePlayer);
+            BoundingRechteck CamBounds = new BoundingRechteck(0, 0, map.getBreite(), map.getHoehe());
+            cam.boundsSetzen(CamBounds);
+        }
+        else if(map.getHouseNumber()==0){
+            //set a weird mixup fokus if ure inside the school bc its too big
+            //Schule zu groß für bildschirm, darum sehr komliziert, hier nur die breite fest und die höhe durch die wände gekappt(all in all siehts einfach besser aus ;) )
+            cam.fokusSetzen(ActivePlayer);
+            Bild b= map.getHouseImage(map.getHouseNumber());
+            BoundingRechteck CamBounds = new BoundingRechteck(b.getX()-(fensterGroesse().breite-b.getBreite())/2, b.getY(), b.getX()-(fensterGroesse().breite-b.getBreite())/2, b.getHoehe());
+
+            cam.boundsSetzen(CamBounds);
         }
         else{
+            //set fokus on House if ure inside
             cam.fokusSetzen(map.getHouseImage(map.getHouseNumber()));
 
         }
@@ -226,6 +239,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
             debugAnzeige8.SetContent("relativePos: " + map.getOffsetPosString());
             //debugAnzeige9.SetContent("OneButtonMode?: " + DialogController.isOneButtonMode());
             //debugAnzeige10.SetContent("LastSelf: " + DialogController.isPlayingLastLine());
+            debugAnzeige10.SetContent("HouseNUmber: " + map.getHouseNumber());
 
             DP.positionSetzen(playerX, playerY);
 

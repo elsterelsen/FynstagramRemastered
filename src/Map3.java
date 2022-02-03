@@ -144,7 +144,6 @@ public class Map3 extends Knoten {
         int i = 0;
         for (String key : MAP.keySet()) {
             Map3.Haus element = MAP.get(key);
-
             String tempPath = defaultPath + element.name + ".png";
             String tempCollPath = defaultPath + element.name + "_coll.png";
 
