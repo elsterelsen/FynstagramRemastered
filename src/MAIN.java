@@ -61,10 +61,12 @@ public class MAIN {
     public static  final String endScreenImgPath = "./Assets/EndScreen/endImg.png";
     public static  final String endScreenBackgroundImgPath = "./Assets/EndScreen/background.png";
 
+    static SPIEL spiel;
+
     public static void main(String[] args){
         DialogChecker dc = new DialogChecker();
 
-        SPIEL spiel  = new SPIEL();
+        spiel  = new SPIEL();
 
 
 

@@ -1,7 +1,6 @@
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import ea.Bild;
-import ea.Game;
 import ea.Knoten;
 import ea.Punkt;
 
@@ -190,6 +189,14 @@ public class Map3 extends Knoten {
 
     }
 
+    public Bild getHouseImage(int key){
+        //return the HouseImage with the certain key (if it exists else return null to prevent NUllPointerException)
+        if(key>=houseImgs.length){
+            return null;
+        }
+        return houseImgs[key];
+    }
+
     public void FixInteriorPos(Player AP, int HouseN) {
         float imgWidth = houseImgs[HouseN].getBreite();
         float imgHeight = houseImgs[HouseN].getHoehe();
@@ -247,6 +254,10 @@ public class Map3 extends Knoten {
         //backgroundImg.positionSetzen(player.getPosX() - MAIN.x/2, player.getPosY()-MAIN.y/2);
 
         this.sichtbarSetzen(true); //nach allem wieder einblenden
+
+
+        //CHange Cameramode to Room-Fixed
+        MAIN.spiel.fokusSetzten(true);
     }
 
     public void leaveHouse() {
@@ -262,6 +273,9 @@ public class Map3 extends Knoten {
 
         npc_C.leaveHouse();
         itemC.leaveHouse();
+
+        //CHange Cameramode to Player-Fixed
+        MAIN.spiel.fokusSetzten(false);
 
     }
 
@@ -349,11 +363,13 @@ public class Map3 extends Knoten {
     }
 
     public int getHouseNumber() {
+        //returns House ID (called houseNumber) of the house ure inside
         //System.out.println("GET HOUSE NUMBER AUFGERUFEN");
         return houseNumber;
     }
 
     public boolean isVisiting() {
+        //returns if ure inside a housing
         return visiting;
     }
 

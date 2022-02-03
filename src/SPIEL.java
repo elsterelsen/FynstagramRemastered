@@ -1,7 +1,5 @@
 import ea.*;
 
-import java.util.Collections;
-
 public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, KlickReagierbar {
 
     private int zaehler;
@@ -80,7 +78,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
         statischeWurzel.add(StartSc);
         statischeWurzel.add(settingScreen, aboutScreen);
         StartSc.setActive(true);
-
+        iconSetzen(new Bild(0,0,"./Assets/icon/icon.png"));
 
     }
 
@@ -178,7 +176,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
 
         DialogController.highLightReadyNpcs(); //einmal alle highlighten die können
 
-        fokusSetzten();
+        fokusInitialisieren();
         StartSc.hideLoadingScreen();
         aboutScreen.hide();
         initDone = true;
@@ -190,11 +188,22 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
     }
 
 
-    public void fokusSetzten() {
+    public void fokusSetzten(boolean insideHousing) {
         //System.out.println("FOKUS SETZEN");
-        cam.fokusSetzen(ActivePlayer);
-        BoundingRechteck CamBounds = new BoundingRechteck(0, 0, map.getBreite(), map.getHoehe());
-        cam.boundsSetzen(CamBounds);
+        if(map==null)return;
+        if(!insideHousing) {
+            cam.fokusSetzen(ActivePlayer);
+        }
+        else{
+            cam.fokusSetzen(map.getHouseImage(map.getHouseNumber()));
+
+        }
+    }
+    public void fokusInitialisieren() {
+        //System.out.println("FOKUS SETZEN");
+            cam.fokusSetzen(ActivePlayer);
+            BoundingRechteck CamBounds = new BoundingRechteck(0, 0, map.getBreite(), map.getHoehe());
+            cam.boundsSetzen(CamBounds);
     }
 
     public void tick() {

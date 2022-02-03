@@ -157,6 +157,7 @@ public class NPC2 extends Knoten {
 
     public void setTalkAbleState(boolean h){
         //setze ob man in Sprechreichweite zu diesem Npc ist
+        if(name.equals("zzz"))return;
         talkAbleImg.sichtbarSetzen(h);
     }
 
