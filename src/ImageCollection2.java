@@ -15,6 +15,8 @@
 import ea.Bild;
 import ea.Knoten;
 
+import java.util.Date;
+
 class ImageCollection2 extends Knoten {
 
     enum Direction{
@@ -35,6 +37,8 @@ class ImageCollection2 extends Knoten {
     private int stepT = 0;
     private int stepB = 0;
 
+    private int stepIdle=0;
+
     private int distanceL = 0;
     private int distanceR = 0;
     private int distanceT = 0;
@@ -45,12 +49,23 @@ class ImageCollection2 extends Knoten {
 
 
     //Matrix containing the PictureArrays below
-    private Bild[][] Imgs = new Bild[4][];
+    private final Bild[][] Imgs = new Bild[4][];
     //Listen mit >Bild< Objekten
-    private Bild[] ImgL = new Bild[4];  //Links
-    private Bild[] ImgR = new Bild[4];  //Recht
-    private Bild[] ImgT = new Bild[3];  //Top
-    private Bild[] ImgB = new Bild[3];  //Bottom
+    private final Bild[] ImgL = new Bild[4];  //Links
+    private final Bild[] ImgR = new Bild[4];  //Recht
+    private final Bild[] ImgT = new Bild[3];  //Top
+    private final Bild[] ImgB = new Bild[3];  //Bottom
+
+
+    private final int idleAnimationLength =4;
+    private long lastChangedIdle=0;
+    //Matrix containing the PictureArrays below
+    private final Bild[][] IdleImgs = new Bild[4][];
+    //Listen mit >Bild< Objekten for idle animation
+    private final Bild[] ImgBIL = new Bild[idleAnimationLength];  //Links
+    private final Bild[] ImgBIR = new Bild[idleAnimationLength];  //Recht
+    private final Bild[] ImgBIT = new Bild[idleAnimationLength];  //Top
+    private final Bild[] ImgBIB = new Bild[idleAnimationLength];  //Bottom
 
 
     private Bild stillImg;
@@ -80,6 +95,11 @@ class ImageCollection2 extends Knoten {
         Imgs[2]=ImgT;
         Imgs[3]=ImgL;
 
+        IdleImgs[0]=ImgBIB;
+        IdleImgs[1]=ImgBIR;
+        IdleImgs[2]=ImgBIT;
+        IdleImgs[3]=ImgBIL;
+
 
 
     }
@@ -99,6 +119,12 @@ class ImageCollection2 extends Knoten {
                 b.sichtbarSetzen(false);
             }
         }
+        //Hide all Images (in IdleImgs matrix)
+        for(Bild[] pictureArray:IdleImgs){
+            for(Bild b:pictureArray){
+                b.sichtbarSetzen(false);
+            }
+        }
         stillImg.sichtbarSetzen(false);
     }
 
@@ -108,8 +134,10 @@ class ImageCollection2 extends Knoten {
         initR();
         initT();
         initB();
-
-
+        initBIR();
+        initBIB();
+        initBIL();
+        initBIT();
     }
 
     public void initL() {
@@ -123,6 +151,16 @@ class ImageCollection2 extends Knoten {
         }
 
     }
+    public void initBIL() {
+        for (int i = 0; i < ImgBIL.length; i++) {
+
+            String Dir = MainDir + "-BIL" + (i) + ".png";
+
+
+            ImgBIL[i] = new Bild(posX, posY, Dir);
+            this.add(ImgBIL[i]);
+        }
+    }
 
     public void initR() {
         for (int i = 0; i < ImgR.length; i++) {
@@ -132,6 +170,16 @@ class ImageCollection2 extends Knoten {
 
             ImgR[i] = new Bild(posX, posY, Dir);
             this.add(ImgR[i]);
+        }
+    }
+    public void initBIR() {
+        for (int i = 0; i < ImgBIR.length; i++) {
+
+            String Dir = MainDir + "-BIR" + (i) + ".png";
+
+
+            ImgBIR[i] = new Bild(posX, posY, Dir);
+            this.add(ImgBIR[i]);
         }
     }
 
@@ -145,6 +193,16 @@ class ImageCollection2 extends Knoten {
             this.add(ImgT[i]);
         }
     }
+    public void initBIT() {
+        for (int i = 0; i < ImgBIT.length; i++) {
+
+            String Dir = MainDir + "-BIT" + (i) + ".png";
+
+
+            ImgBIT[i] = new Bild(posX, posY, Dir);
+            this.add(ImgBIT[i]);
+        }
+    }
 
     public void initB() {
         for (int i = 0; i < ImgB.length; i++) {
@@ -154,6 +212,16 @@ class ImageCollection2 extends Knoten {
 
             ImgB[i] = new Bild(posX, posY, Dir);
             this.add(ImgB[i]);
+        }
+    }
+    public void initBIB() {
+        for (int i = 0; i < ImgBIB.length; i++) {
+
+            String Dir = MainDir + "-BIB" + (i) + ".png";
+
+
+            ImgBIB[i] = new Bild(posX, posY, Dir);
+            this.add(ImgBIB[i]);
         }
     }
 
@@ -228,8 +296,14 @@ class ImageCollection2 extends Knoten {
     }
 
     public void standStill(){
-        HideAll();
-        Imgs[lookingDirection.ordinal()][0].sichtbarSetzen(true);
+        Date date=new Date();
+        System.out.println(date.getTime());
+        if(date.getTime()>lastChangedIdle+300) {
+            lastChangedIdle=date.getTime();
+            HideAll();
+            IdleImgs[lookingDirection.ordinal()][stepIdle].sichtbarSetzen(true);
+            stepIdle = (stepIdle + 1) % IdleImgs[lookingDirection.ordinal()].length;
+        }
     }
 
 

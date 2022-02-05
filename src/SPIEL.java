@@ -1,12 +1,13 @@
 import ea.*;
 
+import java.util.Date;
+
 public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, KlickReagierbar {
 
     private int zaehler;
     private Player ActivePlayer;
     private DialogController5 DialogController;
     private Map3 map;
-
     private DebugAnzeige debugAnzeige1;
     private DebugAnzeige debugAnzeige2;
     private DebugAnzeige debugAnzeige3;
