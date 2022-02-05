@@ -96,6 +96,7 @@ public class Player extends Knoten {
     public void standStill() {
         //System.out.println("STANDSTILL");
         IC2.resetStep();
+        IC2.standStill();
     }
 
     public int getMoney() {

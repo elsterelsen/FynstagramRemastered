@@ -261,7 +261,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
                     }
                 }
 
-                if (tasteGedrueckt(Taste.A)) {
+                else if (tasteGedrueckt(Taste.A)) {
                     DP.positionSetzen(ActivePlayer.getPosX() - walkspeed, ActivePlayer.getPosY());
                     if (map.isWalkable2(DP, ActivePlayer)) {
                         ActivePlayer.WalkLeft();

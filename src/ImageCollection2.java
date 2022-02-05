@@ -17,13 +17,18 @@ import ea.Knoten;
 
 class ImageCollection2 extends Knoten {
 
-    private int ImageCount = 2;    //Anzahl der Bilder
+    enum Direction{
+        Bottom,Right,Top,Left
+    }
+
+    private int ImageCount = 3;    //Anzahl der Bilder
     private int AllImageCount = ImageCount * 4;//vielleicht Count*4 + 1
 
     private float posX;
     private float posY;
     private String MainDir;
 
+    private Direction lookingDirection;
 
     private int stepL = 0;
     private int stepR = 0;
@@ -39,13 +44,14 @@ class ImageCollection2 extends Knoten {
     private int stepDistance = 20; // Distanz die einen Schritt ausmacht
 
 
+    //Matrix containing the PictureArrays below
+    private Bild[][] Imgs = new Bild[4][];
     //Listen mit >Bild< Objekten
-    private Bild[] ImgL = new Bild[ImageCount];  //Links
-    private Bild[] ImgR = new Bild[ImageCount];  //Recht
-    private Bild[] ImgT = new Bild[ImageCount];  //Top
-    private Bild[] ImgB = new Bild[ImageCount];  //Bottom
+    private Bild[] ImgL = new Bild[4];  //Links
+    private Bild[] ImgR = new Bild[4];  //Recht
+    private Bild[] ImgT = new Bild[3];  //Top
+    private Bild[] ImgB = new Bild[3];  //Bottom
 
-    private Bild[] ImgAll = new Bild[AllImageCount * 4];//vielleicht Count*4 + 1
 
     private Bild stillImg;
 
@@ -60,24 +66,40 @@ class ImageCollection2 extends Knoten {
         this.posX = x;
         this.posY = y;
         this.MainDir = MainDir;
+        lookingDirection=Direction.Bottom;
 
         String path = MAIN.playerStillImgPath;
         try {
-
             stillImg = new Bild(posX, posY, path);
             this.add(stillImg);
         } catch (Exception e) {
             System.out.println("ImageCollection2: Fehler beim Lesen des still-Bilds an der Stelle: + " + path);
         }
+        Imgs[0]=ImgB;
+        Imgs[1]=ImgR;
+        Imgs[2]=ImgT;
+        Imgs[3]=ImgL;
+
 
 
     }
 
     public void HideAll() {
+        /**
+         //Old Code for hiding (By Joni), new One below
         for (int i = 0; i < AllImageCount; i++) {
             ImgAll[i].sichtbarSetzen(false);
             stillImg.sichtbarSetzen(false);
         }
+         **/
+
+        //Hide all Images (in Imgs matrix)
+        for(Bild[] pictureArray:Imgs){
+            for(Bild b:pictureArray){
+                b.sichtbarSetzen(false);
+            }
+        }
+        stillImg.sichtbarSetzen(false);
     }
 
     //  Run all Init Methods
@@ -87,12 +109,11 @@ class ImageCollection2 extends Knoten {
         initT();
         initB();
 
-        combineLists();
 
     }
 
     public void initL() {
-        for (int i = 0; i < ImageCount; i++) {
+        for (int i = 0; i < ImgL.length; i++) {
 
             String Dir = MainDir + "-L" + (i) + ".png";
 
@@ -104,7 +125,7 @@ class ImageCollection2 extends Knoten {
     }
 
     public void initR() {
-        for (int i = 0; i < ImageCount; i++) {
+        for (int i = 0; i < ImgR.length; i++) {
 
             String Dir = MainDir + "-R" + (i) + ".png";
 
@@ -115,7 +136,7 @@ class ImageCollection2 extends Knoten {
     }
 
     public void initT() {
-        for (int i = 0; i < ImageCount; i++) {
+        for (int i = 0; i < ImgT.length; i++) {
 
 
             String Dir = MainDir + "-T" + (i) + ".png";
@@ -126,7 +147,7 @@ class ImageCollection2 extends Knoten {
     }
 
     public void initB() {
-        for (int i = 0; i < ImageCount; i++) {
+        for (int i = 0; i < ImgB.length; i++) {
 
             String Dir = MainDir + "-B" + (i) + ".png";
 
@@ -136,22 +157,18 @@ class ImageCollection2 extends Knoten {
         }
     }
 
-    public void combineLists() {
-        System.arraycopy(ImgL, 0, ImgAll, 0, ImageCount);
-        System.arraycopy(ImgR, 0, ImgAll, ImageCount, ImageCount);
-        System.arraycopy(ImgT, 0, ImgAll, ImageCount * 2, ImageCount);
-        System.arraycopy(ImgB, 0, ImgAll, ImageCount * 3, ImageCount);
-    }
+
 
     public void walkLeft(int dis) {
+        lookingDirection=Direction.Left;
         distanceL = distanceL + dis;
         HideAll();
         ImgL[stepL].sichtbarSetzen(true);
         if (distanceL >= stepDistance) {
 
             stepL++;
-            if (stepL >= ImageCount) {
-                stepL = 0;
+            if (stepL >= ImgL.length) {
+                stepL = 1;
             }
             distanceL = 0;
 
@@ -160,14 +177,15 @@ class ImageCollection2 extends Knoten {
     }
 
     public void walkRight(int dis) {
+        lookingDirection=Direction.Right;
         distanceR = distanceR + dis;
         HideAll();
         ImgR[stepR].sichtbarSetzen(true);
         if (distanceR >= stepDistance) {
 
             stepR++;
-            if (stepR >= ImageCount) {
-                stepR = 0;
+            if (stepR >= ImgR.length) {
+                stepR = 1;
             }
             distanceR = 0;
 
@@ -176,14 +194,15 @@ class ImageCollection2 extends Knoten {
     }
 
     public void walkTop(int dis) {
+        lookingDirection=Direction.Top;
         distanceT = distanceT + dis;
         HideAll();
         ImgT[stepT].sichtbarSetzen(true);
         if (distanceT >= stepDistance) {
 
             stepT++;
-            if (stepT >= ImageCount) {
-                stepT = 0;
+            if (stepT >= ImgT.length) {
+                stepT = 1;
             }
             distanceT = 0;
 
@@ -192,14 +211,15 @@ class ImageCollection2 extends Knoten {
     }
 
     public void walkBottom(int dis) {
+        lookingDirection=Direction.Bottom;
         distanceB = distanceB + dis;
         HideAll();
         ImgB[stepB].sichtbarSetzen(true);
         if (distanceB >= stepDistance) {
 
             stepB++;
-            if (stepB >= ImageCount) {
-                stepB = 0;
+            if (stepB >= ImgB.length) {
+                stepB = 1;
             }
             distanceB = 0;
 
@@ -207,12 +227,17 @@ class ImageCollection2 extends Knoten {
         this.verschieben(0, dis);
     }
 
+    public void standStill(){
+        HideAll();
+        Imgs[lookingDirection.ordinal()][0].sichtbarSetzen(true);
+    }
+
 
     public void resetStep() {
-        stepL = 0;
-        stepB = 0;
-        stepT = 0;
-        stepR = 0;
+        stepL = 1;
+        stepB = 1;
+        stepT = 1;
+        stepR = 1;
         //HideAll();
         //stillImg.sichtbarSetzen(true);
     }
