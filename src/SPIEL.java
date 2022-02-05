@@ -194,12 +194,12 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
         if(!insideHousing) {
             //Set Fokus on Player if outside
             cam.fokusSetzen(ActivePlayer);
-            BoundingRechteck CamBounds = new BoundingRechteck(0, 0, map.getBreite(), map.getHoehe());
+            BoundingRechteck CamBounds = new BoundingRechteck(0, 0, map.getMapWidth(), map.getMapHeight());
             cam.boundsSetzen(CamBounds);
         }
         else if(map.getHouseNumber()==0){
             //set a weird mixup fokus if ure inside the school bc its too big
-            //Schule zu groß für bildschirm, darum sehr komliziert, hier nur die breite fest und die höhe durch die wände gekappt(all in all siehts einfach besser aus ;) )
+            //Schule zu groß für bildschirm, darum sehr kompliziert, hier nur die breite fest und die höhe durch die wände gekappt(all in all siehts einfach besser aus ;) )
             cam.fokusSetzen(ActivePlayer);
             Bild b= map.getHouseImage(map.getHouseNumber());
             BoundingRechteck CamBounds = new BoundingRechteck(b.getX()-(fensterGroesse().breite-b.getBreite())/2, b.getY(), b.getX()-(fensterGroesse().breite-b.getBreite())/2, b.getHoehe());
@@ -215,7 +215,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
     public void fokusInitialisieren() {
         //System.out.println("FOKUS SETZEN");
             cam.fokusSetzen(ActivePlayer);
-            BoundingRechteck CamBounds = new BoundingRechteck(0, 0, map.getBreite(), map.getHoehe());
+            BoundingRechteck CamBounds = new BoundingRechteck(0, 0, map.getMapWidth(), map.getMapHeight());
             cam.boundsSetzen(CamBounds);
     }
 

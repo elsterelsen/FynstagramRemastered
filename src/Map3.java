@@ -412,5 +412,14 @@ public class Map3 extends Knoten {
 
         boolean defaultLock; //ist das Haus am anfang gelockt?
     }
+    /**
+    Other Methods to get Heigth and width did something wrong in calculation so these are giving back the right values
+     **/
+    public int getMapHeight(){
+        return mapImgs[1].normaleHoehe()+mapImgs[2].normaleHoehe();
+    }
+    public int getMapWidth(){
+        return mapImgs[1].normaleBreite()+mapImgs[3].normaleBreite();
+    }
 }
 
