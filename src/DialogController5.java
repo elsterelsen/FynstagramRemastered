@@ -81,6 +81,9 @@ public class DialogController5 extends Knoten {
     private final int faceLocationY = 620;
     private final int selfFaceLocationX = MAIN.x - faceLocationX;
 
+    boolean waiting;
+    Date lastDialogTime;
+
 
     public DialogController5(NpcController2 NPC_C2, GameSaver gs, EndScreen eS, ComputerScreen cS,FadeScreen fS) {
         this.NPC_Controller2 = NPC_C2;
@@ -89,12 +92,15 @@ public class DialogController5 extends Knoten {
         this.computerScreen = cS;
         this.fadeScreen = fS;
 
+        waiting=false;
+
         //initialisert
         readJSON_DialogLines();
         readJSON_DialogPackets();
 
         addDisplayObjects();
 
+        lastDialogTime=new Date();
 
         globalTemporalPosition = gameSaver.getTemporalPosition();
         NPC_Controller2.updateNpcPositions(globalTemporalPosition);
@@ -174,6 +180,7 @@ public class DialogController5 extends Knoten {
      * @param npcID String ID des NPCs
      */
     public void startDialog(String npcID) { //Voraussetztung Kollision mit NPC und activ=false;
+
         selection = 0;
         playingLastLine = false;
         waitingForInput = true;
@@ -199,6 +206,7 @@ public class DialogController5 extends Knoten {
             playLastLine(npcID);
         }
 
+        waiting =true;
     }
 
     public void highLightReadyNpcs() {
@@ -264,11 +272,12 @@ public class DialogController5 extends Knoten {
     }
 
     private void endDialog() {
-        System.out.println("DER DIALOG WIRD BEENDET");
+
         active = false;
         waitingForInput = false;
 
-        NPC_Controller2.resetToLastQuietPos();
+        //not needed anymore bc of Input question to start dialog
+        //NPC_Controller2.resetToLastQuietPos();
 
         NPC_Controller2.updateNpcPositions(globalTemporalPosition);
         currentDialogCode = null;

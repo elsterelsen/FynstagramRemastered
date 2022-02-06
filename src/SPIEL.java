@@ -1,6 +1,8 @@
 import ea.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Stack;
 
 public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, KlickReagierbar {
 
@@ -63,12 +65,17 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
     public int tickCounter;
 
     //Collision
-    private String lastCollisionID="-1";
+    private ArrayList<NPC2>lastCollision=new ArrayList<NPC2>();
+
+    //Dialog Activation
+    boolean startDialog;
 
 
     public SPIEL() {
         super(MAIN.x, MAIN.y, "Fynstagram 2020");//windowsize kann nicht mit variable gemacht werden.
 
+
+        startDialog=false;
         //Tracker.sendEventAsync(Collections.singletonMap("type", "starteSpiel"));
         soundController = new SoundController();
         soundController.startTitleMusic();
@@ -274,28 +281,50 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
                     if (map.isWalkable2(DP, ActivePlayer)) {
                         ActivePlayer.WalkRight();
                     }
+
                 }
                 if(!tasteGedrueckt(Taste.W) && !tasteGedrueckt(Taste.S) && !tasteGedrueckt(Taste.A) && !tasteGedrueckt(Taste.D)){ //Es wird keine der Tasten gedrückt
                     ActivePlayer.standStill();
                 }
+                else{//Wenn eine belibige teste Gedrückt wird
+                    startDialog=true;
+                }
             }
+
 
 
             if (NpcController2.checkForCollision(ActivePlayer) && !DialogController.isActive()) {
                 String npcID = NpcController2.getCollidingNPC(ActivePlayer);
                 System.out.println("Der Spieler schneidet den NPC mit der ID: " + npcID);
-                NpcController2.getNPC2(npcID).setTalkAbleState(true);
-                lastCollisionID=npcID;
-                if(tasteGedrueckt(Taste.LEERTASTE)||tasteGedrueckt(Taste.ENTER)){
+                NPC2 npc=NpcController2.getNPC2(npcID);
+                npc.setTalkAbleState(true);
+                lastCollision.add(npc);
+
+                if(startDialog&&(tasteGedrueckt(Taste.LEERTASTE)||tasteGedrueckt(Taste.ENTER))){
                 DialogController.startDialog(npcID);
+                startDialog=false;
+                }
+
+                Stack<NPC2> removeStack=new Stack<NPC2>();
+                for (NPC2 npc2 : lastCollision) {
+                    if(npc2.equals(npc)){continue;}
+                    npc2.setTalkAbleState(false);
+                    removeStack.add(npc2);
+                }
+                for(NPC2 npc2:removeStack){
+                    lastCollision.remove(npc2);
                 }
             }
-            else {
+            else if(!lastCollision.isEmpty()&&!NpcController2.checkForCollision(ActivePlayer)) {
                 //wenn keine Collision stattfindet wird Ansprechbar-zustand vom letzten Kollidierten NPC auf false gesetzt
-                if(NpcController2.getNPC2(lastCollisionID)!=null){
-                    NpcController2.getNPC2(lastCollisionID).setTalkAbleState(false);
+                for (NPC2 npc : lastCollision) {
+                    npc.setTalkAbleState(false);
                 }
+                lastCollision.clear();
             }
+
+
+
 
             gamesaver.SavePlayer(ActivePlayer);
             //pet1.follow(ActivePlayer);

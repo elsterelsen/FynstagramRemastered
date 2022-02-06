@@ -297,7 +297,7 @@ class ImageCollection2 extends Knoten {
 
     public void standStill(){
         Date date=new Date();
-        System.out.println(date.getTime());
+        //System.out.println(date.getTime());
         if(date.getTime()>lastChangedIdle+300) {
             lastChangedIdle=date.getTime();
             HideAll();
