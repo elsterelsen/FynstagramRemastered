@@ -16,7 +16,8 @@ You find the download and illustrated instructions in German on the [project pag
 ### Left to do
 * Mini games (e.g. slot machine for the gambling den)
 * Pet (a dog that follows the main character throughout the game)
-* Various collision-stuff (especially on the Pictures, code is fine right now)
+* Various collision-stuff (especially on the Pictures, code is fine right now) ~done
+* Minor Story enhancements
 
 ## Acknowledgement
 This project relies on [Engine Alpha](https://engine-alpha.org), an easy to use game engine coded in Java mainly for educational purposes. Thanks go out to the developers!
