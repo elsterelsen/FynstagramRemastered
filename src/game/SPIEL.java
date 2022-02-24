@@ -84,6 +84,9 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
     //Dialog Activation
     boolean startDialog;
 
+    //Screens
+    public static ScreenType currentScreen;
+
 
     public SPIEL() {
         super(MAIN.x, MAIN.y, "Fynstagram 2020");//windowsize kann nicht mit variable gemacht werden.
@@ -100,6 +103,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
         statischeWurzel.add(StartSc);
         statischeWurzel.add(settingScreen, aboutScreen);
         StartSc.setActive(true);
+
         iconSetzen(new Bild(0,0,"./Assets/icon/icon.png"));
 
     }
@@ -199,7 +203,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
         DialogController.highLightReadyNpcs(); //einmal alle highlighten die können
 
         fokusInitialisieren();
-        StartSc.hideLoadingScreen();
+        StartSc.hide();
         aboutScreen.hide();
         initDone = true;
 
@@ -369,12 +373,92 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
 
     //  https://engine-alpha.org/wiki/Tastaturtabelle
     public void tasteReagieren(int tastenkuerzel) {
+
+        switch (currentScreen){
+
+            case STARTINGSCREEN -> {
+                if (tastenkuerzel == 0 ) {
+                    StartSc.ShiftLeft();
+                } else if (tastenkuerzel == 3) {
+                    StartSc.ShiftRight();
+                } else if (tastenkuerzel == 31) { //enter
+                    int sel = StartSc.getSelection();
+                    switch (sel) {
+                        case (0):
+                            System.out.println("PLAY: Spiel wird gestartet");
+                            StartSc.show();
+                            Konstruktor();
+                            break;
+
+                        case (1):
+                            System.out.println("NEW GAME: Spiel überschriebt Dateien");
+                            StartSc.show();
+                            NewGameLoader gl = new NewGameLoader();
+                            //System.out.println("LADEN FERTIG!!");
+                            Konstruktor();
+                            break;
+
+                        case (2):
+                            System.out.println("EXIT KNOPF GEDRÜCKT: Spiel wird geschlossen");
+                            schliessen();
+                            break;
+
+                        case (3):
+                            System.out.println("ABOUT GEDRÜCKT:AboutScreenWir gestartet");
+                            settingScreen.hide();
+                            aboutScreen.toggleWindow();
+                            break;
+
+                        case (4):
+                            System.out.println("SETTINGS GEDRÜCKT:SettingScreen wird gestartet");
+                            aboutScreen.hide();
+                            settingScreen.toggleWindow();
+                            break;
+                    }
+                }
+                else if (itemAnimator.isActiv()) {
+                    if (tastenkuerzel == 31) {
+                        System.out.println("game.SPIEL: ENTER GEDRÜCKt");
+                        itemAnimator.hideEverything();
+                    }
+                }
+            }
+            case ENDSCREEN -> {
+
+            }
+            case FADESCREEN -> {
+
+            }
+            case GAMESCREEN -> {
+                if (DialogController.isWaitingForInput()) {
+                    if (tastenkuerzel == 0) {
+                        //System.out.println("Taste ist gedrückt und isWaitingForInputs = true");
+                        DialogController.input("links");
+                    } else if (tastenkuerzel == 3) {
+                        DialogController.input("rechts");
+                    } else if (tastenkuerzel == 31) {
+                        System.out.println("game.SPIEL: ENTER GEDRÜCKt");
+                        DialogController.input("enter");
+                    }
+                }
+            }
+            case WINDOWSCREEN -> {
+
+            }
+            case COMPUTERSCREEN -> {
+                    System.out.println("game.SPIEL: ENTER GEDRÜCKT");
+                    computer.hide();
+
+            }
+        }
+
+
         if (!StartSc.isActive()) {
             if (tastenkuerzel == 8) {//I als in
                 if (computer.isActiv()) {
-                    computer.closePC();
+                    computer.hide();
                 } else {
-                    computer.openPC();
+                    computer.hide();
                 }
             }
             if (tastenkuerzel == 14) {//o als out
@@ -393,10 +477,6 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
 //                game.screen.minigame.Minigame2.startGame();
 //            }
 
-            if (tastenkuerzel == 19) {//Wenn T gedrückt wird teleport 20 Blöcke nach vorne
-                ActivePlayer.positionSetzen(ActivePlayer.positionX() + 10, ActivePlayer.positionY());
-
-            }
             if(true){ //test
                 switch (tastenkuerzel){
                     case(6): // "G"
@@ -424,74 +504,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
 
             }
 
-            if(computer.isActiv()){
-                if (tastenkuerzel == 31) {
-                    System.out.println("game.SPIEL: ENTER GEDRÜCKT");
-                    computer.closePC();
-                }
-            }
 
-            if (DialogController.isWaitingForInput()) {
-                if (tastenkuerzel == 0) {
-                    //System.out.println("Taste ist gedrückt und isWaitingForInputs = true");
-                    DialogController.input("links");
-                } else if (tastenkuerzel == 3) {
-                    DialogController.input("rechts");
-                } else if (tastenkuerzel == 31) {
-                    System.out.println("game.SPIEL: ENTER GEDRÜCKt");
-                    DialogController.input("enter");
-                }
-            }
-            if (itemAnimator.isActiv()) {
-                if (tastenkuerzel == 31) {
-                    System.out.println("game.SPIEL: ENTER GEDRÜCKt");
-                    itemAnimator.hideEverything();
-                }
-            }
-        }
-
-        if (StartSc.isActive()) {
-            if (tastenkuerzel == 0  && !aboutScreen.isActive() && !settingScreen.isActive()) {
-                StartSc.ShiftLeft();
-            } else if (tastenkuerzel == 3  && !aboutScreen.isActive() && !settingScreen.isActive()) {
-                StartSc.ShiftRight();
-            } else if (tastenkuerzel == 31) { //enter
-                int sel = StartSc.getSelection();
-                switch (sel) {
-                    case (0):
-                        System.out.println("PLAY: Spiel wird gestartet");
-                        StartSc.startLoadingScreen();
-                        Konstruktor();
-                        break;
-
-                    case (1):
-                        System.out.println("NEW GAME: Spiel überschriebt Dateien");
-                        StartSc.startLoadingScreen();
-                        NewGameLoader gl = new NewGameLoader();
-                        //System.out.println("LADEN FERTIG!!");
-                        Konstruktor();
-                        break;
-
-                    case (2):
-                        System.out.println("EXIT KNOPF GEDRÜCKT: Spiel wird geschlossen");
-                        schliessen();
-                        break;
-
-                    case (3):
-                        System.out.println("ABOUT GEDRÜCKT:AboutScreenWir gestartet");
-                        settingScreen.hide();
-                        aboutScreen.toggleWindow();
-                        break;
-
-                    case (4):
-                        System.out.println("SETTINGS GEDRÜCKT:SettingScreen wird gestartet");
-                        aboutScreen.hide();
-                        settingScreen.toggleWindow();
-                        break;
-                }
-
-
-            }
         }
     }
 

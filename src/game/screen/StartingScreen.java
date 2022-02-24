@@ -16,9 +16,10 @@ import ea.Bild;
 import ea.Knoten;
 import ea.Text;
 import game.MAIN;
+import game.SPIEL;
 
 
-public class StartingScreen extends Knoten {
+public class StartingScreen extends Knoten implements Screen{
 
     private Bild BackgroundPic;
     private Bild loadingPic;
@@ -106,7 +107,9 @@ public class StartingScreen extends Knoten {
 
     public void setActive(boolean active) {
         this.active = active;
-
+        if(active){
+            SPIEL.currentScreen=ScreenType.STARTINGSCREEN;
+        }
         BackgroundPic.sichtbarSetzen(active);
         loadingPic.sichtbarSetzen(false);
 
@@ -144,19 +147,6 @@ public class StartingScreen extends Knoten {
         }
     }
 
-    public void startLoadingScreen() {
-        BackgroundPic.sichtbarSetzen(false);
-        for (int i = 0; i < ButtonCount; i++) {
-            Buttons[i].sichtbarSetzen(false);
-        }
-        loadingPic.sichtbarSetzen(true);
-    }
-
-    public void hideLoadingScreen() {
-        this.setActive(false);
-
-    }
-
 
     public void TextStartScEntfernen() {
         //JF: Du kannst auch einfach tb0.sichtbarSetzen(false); machen
@@ -165,5 +155,20 @@ public class StartingScreen extends Knoten {
         this.entfernen(tb1);
         //this.entfernen(tb2);
         //this.entfernen(tb3);
+    }
+
+    @Override
+    public void show() {
+        BackgroundPic.sichtbarSetzen(false);
+        for (int i = 0; i < ButtonCount; i++) {
+            Buttons[i].sichtbarSetzen(false);
+        }
+        SPIEL.currentScreen=ScreenType.STARTINGSCREEN;
+    }
+
+    @Override
+    public void hide() {
+        this.setActive(false);
+        SPIEL.currentScreen=ScreenType.GAMESCREEN;
     }
 }
