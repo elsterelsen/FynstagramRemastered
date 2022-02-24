@@ -1,1 +1,1 @@
-[Sun Feb 06 12:54:51 CET 2022][ERROR] Der Eingabe-Parameter g leitet sich von der Klasse Game ab. Das würde für einen internen Fehler sorgen und ist daher nicht möglich. Stattdessen kann man die tasteReagieren-Methode verwenden oder über eine andere mit diesem Interface den selben Effekt erzeugen. (Game.java:562)
+[Thu Feb 24 13:02:02 CET 2022][ERROR] Das Bild konnte nicht geladen werden: ./Assets/game.dialog.HelpingArrow/top.png (ImageLoader.java:51)

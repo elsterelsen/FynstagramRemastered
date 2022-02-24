@@ -48,7 +48,7 @@ public class Map2 extends Knoten {
 
     private String defaultPath = "./Assets/Houses/"; //Basis-Pfad für alle interiorPics
 
-    private int HouseNumber = 0;// zeigt an in welchem haus der Player ist. Entspricht der reinfolge des Jsons
+    private int HouseNumber = 0;// zeigt an in welchem haus der game.character.Player ist. Entspricht der reinfolge des Jsons
 
     private HashMap<String, Map2.Haus> MAP;
 
@@ -160,7 +160,7 @@ public class Map2 extends Knoten {
 
             path = defaultPath + element.name + ".png";
             InteriorPics[i] = new Bild(0, 0, path);
-            //Zentriert Bild anhand von der globalen Window Größe (MAIN.x, MAIN.y)
+            //Zentriert Bild anhand von der globalen Window Größe (game.MAIN.x, game.MAIN.y)
 
             InteriorPics[i].positionSetzen(0, 0);//zentriert das Bild
             InteriorPics[i].setOpacity(0.5f);
@@ -207,7 +207,7 @@ public class Map2 extends Knoten {
 
 
     /**
-     * Macht aus den angegebene Positionen der Gebaüde ColliderShape Objekte und Türen.
+     * Macht aus den angegebene Positionen der Gebaüde game.map_collision.ColliderShape Objekte und Türen.
      */
     private void CreateHitboxObjects() {
         for (int i = 0; i < NumberofB; i++) {
@@ -222,7 +222,7 @@ public class Map2 extends Knoten {
      * Erstellt die beiden "statischen" Bilder und bindet sie ein. Das muss früh geschehen, damit sie weit hinten sind.
      */
     private void InitMapPic(){
-        MapPic = new Bild(0, 0, "./Assets/Map3.jpg");
+        MapPic = new Bild(0, 0, "./Assets/game.Map3.jpg");
         MapPic.setOpacity(1f);
         this.add(MapPic);
 
@@ -298,7 +298,7 @@ public class Map2 extends Knoten {
                 if (OuterWallHitbox[i].isIn(dp)) {
                     hit = true;
                     if (isInDoor(dp)) {
-                        System.out.println("Player beginnt gerade in Haus: " + getHouseNumber(dp) + "zu gehen");
+                        System.out.println("game.character.Player beginnt gerade in Haus: " + getHouseNumber(dp) + "zu gehen");
                         enterHouse(HouseNumber, dp, AP);
                     }
                 }

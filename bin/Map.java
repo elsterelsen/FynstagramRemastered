@@ -32,7 +32,7 @@ public class Map extends Knoten{
     private int PlayerW;
     private int PlayerH;
 
-    private int HouseNumber;// zeigt an in welchem haus der Player ist. Entspricht der reinfolge des Jsons
+    private int HouseNumber;// zeigt an in welchem haus der game.character.Player ist. Entspricht der reinfolge des Jsons
 
     private HashMap<String, Map.Haus> MAP;
 
@@ -57,7 +57,7 @@ public class Map extends Knoten{
         this.PlayerW = (int)PW;
         this.PlayerH = (int)PH;
 
-        MapPic= new Bild(0,0,"./Assets/Map3.jpg");
+        MapPic= new Bild(0,0,"./Assets/game.Map3.jpg");
         this.add(MapPic);
 
         readJSON();//muss erst gelesen werden, um länge für Arrays zu geben

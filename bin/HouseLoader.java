@@ -47,7 +47,7 @@ public class HouseLoader extends Knoten {
     }
 
     /**
-     * Empfängt den Player in dem Haus
+     * Empfängt den game.character.Player in dem Haus
      */
     public void welcomeGuest(){
         int HouseNumber = MapObject.getHouseNumber();
@@ -88,7 +88,7 @@ public class HouseLoader extends Knoten {
             Houses[i] = new Bild(200,200,path);
 
 
-            //Zentriert Bild anhand von der globalen Window Größe (MAIN.x, MAIN.y)
+            //Zentriert Bild anhand von der globalen Window Größe (game.MAIN.x, game.MAIN.y)
             float x = Houses[i].getBreite();
             float y = Houses[i].getHoehe();
             float centerX = (MAIN.x/2) - x/2;

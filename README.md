@@ -15,7 +15,7 @@ You find the download and illustrated instructions in German on the [project pag
 
 ### Left to do
 * Mini games (e.g. slot machine for the gambling den)
-* Pet (a dog that follows the main character throughout the game)
+* game.character.Pet (a dog that follows the main character throughout the game)
 * Various collision-stuff (especially on the Pictures, code is fine right now)
 
 ## Acknowledgement

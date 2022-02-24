@@ -1,5 +1,5 @@
 /**
- * Organisiert die Animation von Laufbewegungen für >Player< und >Npc<
+ * Organisiert die Animation von Laufbewegungen für >game.character.Player< und >Npc<
  * Sammelt Bilder für alle Gehrichtungen und entscheidet welches Bild anzuzeigen.
  *
  * Benennung:
@@ -205,7 +205,7 @@ import ea.*;
          int distance = (int)Math.sqrt(dx*dx + dy*dy);//Diagonaler Abstand als INT
 
          /**
-          * Macht aus dem wlakspeed eine Abstand, wenn der Player diagonal läuft
+          * Macht aus dem wlakspeed eine Abstand, wenn der game.character.Player diagonal läuft
           */
          abX = dx*walkspeed/(int)Math.sqrt(2);
          abY = dy*walkspeed/(int)Math.sqrt(2);
@@ -253,7 +253,7 @@ import ea.*;
 
 
      /**
-      *  Wichtig für später Player Teleporation oder Resets
+      *  Wichtig für später game.character.Player Teleporation oder Resets
       * @param x s. Raum Doku
       * @param y s. Raum Doku
       */
