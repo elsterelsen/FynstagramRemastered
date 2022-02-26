@@ -358,7 +358,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
             tickCounter++;
             if (tickCounter > 400) { //alle vier sekunden
                 tickCounter = 0;
-                slowTick();
+                gamesaver.saveJSON();
             }
         }
 
@@ -366,9 +366,6 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
 
     }
 
-    public void slowTick() {
-        gamesaver.saveJSON();
-    }
 
 
     //  https://engine-alpha.org/wiki/Tastaturtabelle
@@ -376,7 +373,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
 
         switch (currentScreen){
 
-            case STARTINGSCREEN -> {
+            case STARTINGSCREEN:
                 if (tastenkuerzel == 0 ) {
                     StartSc.ShiftLeft();
                 } else if (tastenkuerzel == 3) {
@@ -422,14 +419,13 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
                         itemAnimator.hideEverything();
                     }
                 }
-            }
-            case ENDSCREEN -> {
+            break;
+            case ENDSCREEN:
 
-            }
-            case FADESCREEN -> {
-
-            }
-            case GAMESCREEN -> {
+            break;
+            case FADESCREEN :
+                break;
+            case GAMESCREEN :
                 if (DialogController.isWaitingForInput()) {
                     if (tastenkuerzel == 0) {
                         //System.out.println("Taste ist gedrückt und isWaitingForInputs = true");
@@ -441,15 +437,14 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
                         DialogController.input("enter");
                     }
                 }
-            }
-            case WINDOWSCREEN -> {
-
-            }
-            case COMPUTERSCREEN -> {
+                break;
+            case WINDOWSCREEN :
+                break;
+            case COMPUTERSCREEN:
                     System.out.println("game.SPIEL: ENTER GEDRÜCKT");
                     computer.hide();
 
-            }
+            break;
         }
 
 

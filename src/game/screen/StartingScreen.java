@@ -160,6 +160,8 @@ public class StartingScreen extends Knoten implements Screen{
     @Override
     public void show() {
         BackgroundPic.sichtbarSetzen(false);
+
+        loadingPic.sichtbarSetzen(true);
         for (int i = 0; i < ButtonCount; i++) {
             Buttons[i].sichtbarSetzen(false);
         }

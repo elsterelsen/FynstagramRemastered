@@ -8,6 +8,8 @@ import game.character.Player;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.*;
 
 public class GameSaver {
@@ -136,6 +138,8 @@ public class GameSaver {
     }
     public void saveJSON() {
 
+        new SaveThread(new Save(saveState)).start();
+        /*
         try {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             FileOutputStream fout = new FileOutputStream(gameSaveFilePath);
@@ -147,7 +151,27 @@ public class GameSaver {
             System.out.println(ANSI_PURPLE + "Ein Fehler beim Schreiben der Json Datei. Entweder Pfad flasch, oder JSON Struktur." + ANSI_RESET);
         }
         readJSON(); //update saveState
-
+        */
+    }
+    class SaveThread extends Thread{
+        private final Save s;
+        SaveThread(Save s){
+            this.s=s;
+        }
+        public void run(){
+            try {
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                FileOutputStream fout = new FileOutputStream(gameSaveFilePath);
+                fout.write(gson.toJson(s).getBytes());
+                fout.close();
+                System.out.println(ANSI_GREEN + "game.dataManagement.GameSaver: JSON(" +  gameSaveFilePath + ") erfolgreich gespeichert" + ANSI_RESET);
+            }
+            catch(Exception e) {
+                System.out.println(ANSI_PURPLE + "Ein Fehler beim Schreiben der Json Datei. Entweder Pfad flasch, oder JSON Struktur." + ANSI_RESET);
+            }
+            //readJSON(); //update saveState
+            System.out.println("Speichervorgang beendet um: " + new Date().toString() );
+        }
     }
 
 
@@ -168,6 +192,19 @@ public class GameSaver {
         public String temporalPosition;
         public List<String> items;
         public List<String> lines;
+
+        public Save(Save s) {
+            this.name = s.name;
+            this.posX = s.posX;
+            this.posY = s.posY;
+            this.walkspeed = s.walkspeed;
+            this.houseNumber = s.houseNumber;
+            this.lastOutsidePosX = s.lastOutsidePosX;
+            this.lastOutsidePosY = s.lastOutsidePosY;
+            this.temporalPosition = s.temporalPosition;
+            this.items = new ArrayList<>(s.items);
+            this.lines = new ArrayList<>(s.lines);
+        }
 
         public Save(){
             items = new ArrayList<>();
@@ -217,5 +254,6 @@ public class GameSaver {
                     ", lines=" + lines +
                     '}';
         }
+
     }
 }
