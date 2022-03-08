@@ -58,10 +58,12 @@ public class StartingScreen extends Knoten implements Screen{
     private ExtraInformation[] extraInformations;
 
     private Text saveOverrideWarning;
+    private Text thisEmptyText;
 
     public StartingScreen() {
         //initExtraInformations();
         loadExtraInformations();
+
 
         saveOverrideWarning=new Text("Achtung du bist gerade dabei den spielstand zu überschreiben! Zum bestätigen drücke Enter! zum Abbrechen Space/Leertaste",0,0);
         saveOverrideWarning.positionSetzen(300,400);
@@ -78,9 +80,14 @@ public class StartingScreen extends Knoten implements Screen{
         loadingPic.sichtbarSetzen(false);
         standardButtonGroup =new Knoten();
         saveButtonGroup=new Knoten();
+
         selection=0;
         FillButtonObjects();
         this.add(standardButtonGroup);
+        thisEmptyText=new Text("Dieser Speicherplatz ist leer!",20,574);
+        thisEmptyText.setzeFarbe("rot");
+        add(thisEmptyText);
+        thisEmptyText.sichtbarSetzen(false);
     }
 
     private void FillButtonObjects() {
@@ -101,16 +108,18 @@ public class StartingScreen extends Knoten implements Screen{
             standardButtonGroup.add(standardButtons[i]);
         }
         add(standardButtonGroup);
+        add(saveButtonGroup);
+        saveButtonGroup.sichtbarSetzen(false);
         UpdateButtons();
     }
     private void setButtonSetToStandard(boolean b){
         if(b){
-            add(standardButtonGroup);
-            entfernen(saveButtonGroup);
+            standardButtonGroup.sichtbarSetzen(true);
+            saveButtonGroup.sichtbarSetzen(false);
         }
         else{
-            add(saveButtonGroup);
-            entfernen(standardButtonGroup);
+            saveButtonGroup.sichtbarSetzen(true);
+            standardButtonGroup.sichtbarSetzen(false);
         }
         UpdateButtons();
     }
@@ -162,6 +171,7 @@ public class StartingScreen extends Knoten implements Screen{
      */
 
     public void ShiftLeft() {
+        if(!state.isButtonState()){return;}
         selection--;
         if (selection < 0) {
             selection = 0;//stay at first
@@ -171,6 +181,7 @@ public class StartingScreen extends Knoten implements Screen{
     }
 
     public void ShiftRight() {
+        if(!state.isButtonState()){return;}
         selection++;
         if (selection >= buttonCount) {
             selection = buttonCount - 1;//stay at last
@@ -197,6 +208,9 @@ public class StartingScreen extends Knoten implements Screen{
 
         for (int i = 0; i < buttonCount; i++) {
             standardButtons[i].sichtbarSetzen(active);
+        }
+        for (int i = 0; i < buttonCount; i++) {
+            saveButtons[i].sichtbarSetzen(active);
         }
     }
 
@@ -241,6 +255,7 @@ public class StartingScreen extends Knoten implements Screen{
 
     @Override
     public void show() {
+        thisEmptyText.sichtbarSetzen(false);
         BackgroundPic.sichtbarSetzen(false);
         standardButtonGroup.sichtbarSetzen(false);
         saveButtonGroup.sichtbarSetzen(false);
@@ -295,8 +310,7 @@ public class StartingScreen extends Knoten implements Screen{
                     case (0):
                         System.out.println("PLAY: Spielstand auswählen zum starten");
                         state=State.PLAY;
-                        entfernen(standardButtonGroup);
-                        add(saveButtons);
+                        setButtonSetToStandard(false);
                         selection=0;
                         UpdateButtons();
 
@@ -305,8 +319,7 @@ public class StartingScreen extends Knoten implements Screen{
                     case (1):
                         System.out.println("NEW GAME: Spielstand auswählen um neues Spiel zu speichern");
                         state=State.NEW;
-                        entfernen(standardButtonGroup);
-                        add(saveButtons);
+                        setButtonSetToStandard(false);
                         selection=0;
                         UpdateButtons();
                         break;
@@ -346,25 +359,23 @@ public class StartingScreen extends Knoten implements Screen{
                 switch(selection){
                     case (3):
                         System.out.println("Back GEDRÜCKT: state set to standard");
-                        setButtonSetToStandard(true);
                         state=State.STANDARD;
+                        setButtonSetToStandard(true);
+                        selection=0;
+                        UpdateButtons();
                         break;
 
                     case (4):
                         System.out.println("SETTINGS GEDRÜCKT:SettingScreen wird gestartet");
                         settingScreen.show();
+
                         break;
+
                         default:
                         if(!extraInformations[sel].isEmpty()){
-
-                            /**
-
-                             hier muss noch eine visuelle Warnung vorm überschreiben eines belegten speicherstandes eingefügt werden (einfügen in state enum evtl?)
-
-                             Hier ist noch Baustelle!!!
-                             **/
                             saveOverrideWarning.setzeInhalt("Bist du sicher, dass du Spielstand "+selection+" überschreiben willst? JA: J/Enter NEIN: N");
                             add(saveOverrideWarning);
+                            saveOverrideWarning.sichtbarSetzen(true);
                             selectedGameSave=selection;
                             state=State.WAITING;
                         }
@@ -382,6 +393,35 @@ public class StartingScreen extends Knoten implements Screen{
 
                 break;
             case PLAY:
+                switch(selection){
+                    case (3):
+                        System.out.println("Back GEDRÜCKT: state set to standard");
+                        state=State.STANDARD;
+                        setButtonSetToStandard(true);
+                        selection=0;
+                        UpdateButtons();
+                        break;
+
+                    case (4):
+                        System.out.println("SETTINGS GEDRÜCKT:SettingScreen wird gestartet");
+                        settingScreen.show();
+
+                        break;
+
+                    default:
+                        if(extraInformations[sel].isEmpty()){
+                            thisEmptyText.sichtbarSetzen(true);
+                            thisEmptyText.positionSetzen(20+selection*300,574);
+                            state=State.THISEMPTY;
+                        }
+                        else{
+                            System.out.println("Starte Spielstand von: "+new String(gameSaveFilePathTemplate).replace('?',(char)(selection+48)));
+                            show();
+                            game.Konstruktor(new String(npcSaveFilePathTemplate).replace('?',(char)(selection+48)),new String(gameSaveFilePathTemplate).replace('?',(char)(selection+48)));
+                        }
+
+
+                }
                 break;
             case ABOUT:
                 aboutScreen.hide();
@@ -392,18 +432,28 @@ public class StartingScreen extends Knoten implements Screen{
                 settingScreen.hide();
                 state=State.STANDARD;
                 break;
+            case THISEMPTY:
+                thisEmptyText.sichtbarSetzen(false);
+                state=State.PLAY;
+                break;
 
         }
     }
     public void setStateToStandard(){
         if(state!=State.ABOUT&&state!=State.SETTINGS){
             state=State.STANDARD;
+            selection=0;
+            saveOverrideWarning.sichtbarSetzen(false);
             saveButtonGroup.sichtbarSetzen(false);
             standardButtonGroup.sichtbarSetzen(true);
+            thisEmptyText.sichtbarSetzen(false);
         }
     }
     enum State{
-        STANDARD,NEW,PLAY,OLD,ABOUT,SETTINGS,WAITING
+        STANDARD,NEW,PLAY,OLD,ABOUT,SETTINGS,WAITING,THISEMPTY;
+        public boolean isButtonState(){
+            return this.ordinal()<4;
+        }
     }
 
 

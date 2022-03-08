@@ -18,6 +18,11 @@ public class SaveFileManager {
     public static final String ANSI_PURPLE = "\u001B[35m";
 
 
+    private final static String gameSaveFilePathTemplate="Assets/Files/saveJsons/GameSave_?.json";
+    private final static String npcSaveFilePathTemplate="Assets/Files/saveJsons/NpcSave_?.json";
+    private final static String extraInformationPathTemplate="Assets/Files/saveJsons/ExtraInformation_?.json";
+
+
     public static ExtraInformation readExtraInformationJSON(String path) {
         ExtraInformation information;
             Gson gson = new GsonBuilder().create();
@@ -50,4 +55,15 @@ public class SaveFileManager {
         System.out.println("Speichervorgang beendet um: " + new Date().toString() );
     }
 
+    public static void main(String[] args) {
+        System.out.println("Starte Zurücksetzen der Gamesavedaten");
+        resetData();
+        System.out.println("Zurücksetzen beendet");
+    }
+    public static void resetData() {
+        for (int i = 0; i <3;i++) {
+            new NewGameLoader(new String(npcSaveFilePathTemplate).replace('?',(char)(i+48)),new String(gameSaveFilePathTemplate).replace('?',(char)(i+48)));
+            saveExtraInformation(new String(extraInformationPathTemplate).replace('?',(char)(i+48)),new ExtraInformation(true));
+        }
+    }
 }
