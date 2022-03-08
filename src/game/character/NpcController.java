@@ -20,9 +20,9 @@ public class NpcController extends Knoten {
     public static final String ANSI_PURPLE = "\u001B[35m";
 
     //Pfade
-    private String npcTemplatePath = MAIN.npcTemplatePath;
-    private String npcFilePath = MAIN.npcFilePath;
-    private String npcPositionPath = MAIN.npcPositionPath;
+    private final String npcTemplatePath = MAIN.npcTemplatePath;
+    private final String npcFilePath;
+    private final String npcPositionPath = MAIN.npcPositionPath;
 
 
     //JSON GSON
@@ -43,8 +43,9 @@ public class NpcController extends Knoten {
     private Player AP;
     private GameSaver gamesaver;
 
-    public NpcController(Player mAP, GameSaver gs) {
+    public NpcController(Player mAP, GameSaver gs,String npcFilePath) {
         AP = mAP;
+        this.npcFilePath=npcFilePath;
         this.gamesaver = gs;
         //resetJSON();
 

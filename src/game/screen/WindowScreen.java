@@ -30,6 +30,14 @@ public class WindowScreen extends Knoten implements Screen{
         mainImg.sichtbarSetzen(true);
         SPIEL.currentScreen=type;
     }
+    public void showSecret(){
+        active = true;
+        mainImg.sichtbarSetzen(true);
+    }
+    public void hideSecret(){
+        active = false;
+        mainImg.sichtbarSetzen(false);
+    }
 
     public void hide(){
         active = false;

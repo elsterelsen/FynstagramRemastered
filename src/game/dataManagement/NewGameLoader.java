@@ -14,15 +14,19 @@ public class NewGameLoader {
     public static final String ANSI_PURPLE = "\u001B[35m";
 
     public NewGameLoader(){
-        overwriteNpcJSON();
-        overwriteGamesaveJSON();
+        overwriteNpcJSON(MAIN.npcFilePath);
+        overwriteGamesaveJSON(MAIN.gameSaveFilePath);
+    }
+    public NewGameLoader(String npcFilePath,String gameSaveFilePath){
+        overwriteNpcJSON(npcFilePath);
+        overwriteGamesaveJSON(gameSaveFilePath);
     }
 
 
-    private void overwriteNpcJSON() {
+    private void overwriteNpcJSON(String destinationPath) {
         try {
             File originalFile = new File(MAIN.npcTemplatePath);
-            File destinationFile = new File(MAIN.npcFilePath);
+            File destinationFile = new File(destinationPath);
             FileChannel src = new FileInputStream(originalFile).getChannel();
             FileChannel dest = new FileOutputStream(destinationFile).getChannel();
             dest.transferFrom(src, 0, src.size());
@@ -34,10 +38,10 @@ public class NewGameLoader {
 
         }
     }
-    private void overwriteGamesaveJSON() {
+    private void overwriteGamesaveJSON(String destinationPath) {
         try {
             File originalFile = new File(MAIN.gameSaveTemplateFilePath);
-            File destinationFile = new File(MAIN.gameSaveFilePath);
+            File destinationFile = new File(destinationPath);
             FileChannel src = new FileInputStream(originalFile).getChannel();
             FileChannel dest = new FileOutputStream(destinationFile).getChannel();
             dest.transferFrom(src, 0, src.size());

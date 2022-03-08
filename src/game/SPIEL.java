@@ -49,8 +49,8 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
     private SoundController soundController;
 
     //SettingScreen
-    private WindowScreen settingScreen;
-    private WindowScreen aboutScreen;
+    private SettingScreen settingScreen;
+    private AboutScreen aboutScreen;
 
     //END SCREEN
     private EndScreen endScreen;
@@ -98,8 +98,8 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
         soundController.startTitleMusic();
         StartSc = new StartingScreen();
 
-        settingScreen = new WindowScreen(MAIN.settingsScreenImg);
-        aboutScreen = new WindowScreen(MAIN.aboutScreenImg);
+        settingScreen = new SettingScreen(MAIN.settingsScreenImg);
+        aboutScreen = new AboutScreen(MAIN.aboutScreenImg);
         statischeWurzel.add(StartSc);
         statischeWurzel.add(settingScreen, aboutScreen);
         StartSc.setActive(true);
@@ -108,7 +108,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
 
     }
 
-    public void Konstruktor() {
+    public void Konstruktor(String npcSaveFilePath,String gameSaveFilePath) {
         tickerAnmelden(this, 16);
 
         endScreen = new EndScreen(soundController);
@@ -116,14 +116,14 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
         fadeScreen = new FadeScreen();
 
         zaehler = 0;
-        gamesaver = new GameSaver(); //game.dataManagement.GameSaver, der im Moment nur Spieler-Sachen speichert
+        gamesaver = new GameSaver(gameSaveFilePath); //game.dataManagement.GameSaver, der im Moment nur Spieler-Sachen speichert
 
         DP = new DummyPlayer(600, 400);
 
 
         ActivePlayer = new Player(gamesaver.getPosX(), gamesaver.getPosX(), gamesaver);
         //pet1 = new game.character.Pet(1100,1100);
-        NpcController = new NpcController(ActivePlayer, gamesaver);
+        NpcController = new NpcController(ActivePlayer, gamesaver,npcSaveFilePath);
 
         DialogController = new DialogController(NpcController, gamesaver, endScreen, computer, fadeScreen);
         debugAnzeige1 = new DebugAnzeige(0, 0);
@@ -378,40 +378,11 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
                     StartSc.ShiftLeft();
                 } else if (tastenkuerzel == 3) {
                     StartSc.ShiftRight();
-                } else if (tastenkuerzel == 31) { //enter
-                    int sel = StartSc.getSelection();
-                    switch (sel) {
-                        case (0):
-                            System.out.println("PLAY: Spiel wird gestartet");
-                            StartSc.show();
-                            Konstruktor();
-                            break;
-
-                        case (1):
-                            System.out.println("NEW GAME: Spiel überschriebt Dateien");
-                            StartSc.show();
-                            NewGameLoader gl = new NewGameLoader();
-                            //System.out.println("LADEN FERTIG!!");
-                            Konstruktor();
-                            break;
-
-                        case (2):
-                            System.out.println("EXIT KNOPF GEDRÜCKT: Spiel wird geschlossen");
-                            schliessen();
-                            break;
-
-                        case (3):
-                            System.out.println("ABOUT GEDRÜCKT:AboutScreenWir gestartet");
-                            settingScreen.hide();
-                            aboutScreen.toggleWindow();
-                            break;
-
-                        case (4):
-                            System.out.println("SETTINGS GEDRÜCKT:SettingScreen wird gestartet");
-                            aboutScreen.hide();
-                            settingScreen.toggleWindow();
-                            break;
-                    }
+                } else if (tastenkuerzel == 31||tastenkuerzel==Taste.LEERTASTE) { //enter
+                    StartSc.select(this,settingScreen,aboutScreen);
+                }
+                else if(tastenkuerzel==Taste.N||tastenkuerzel==Taste.B){
+                    StartSc.setStateToStandard();
                 }
                 else if (itemAnimator.isActiv()) {
                     if (tastenkuerzel == 31) {
@@ -439,12 +410,19 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
                 }
                 break;
             case WINDOWSCREEN :
+
                 break;
             case COMPUTERSCREEN:
                     System.out.println("game.SPIEL: ENTER GEDRÜCKT");
                     computer.hide();
-
+                    break;
+            case ABOUTSCREEN:
+                aboutScreen.hide();
+                break;
+            case SETTINGSSCREEN:
+                settingScreen.hide();
             break;
+
         }
 
 

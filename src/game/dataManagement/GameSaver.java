@@ -19,17 +19,22 @@ public class GameSaver {
     public static final String ANSI_PURPLE = "\u001B[35m";
 
     private Save saveState = new Save();
-    private final String gameSaveFilePath = MAIN.gameSaveFilePath;
+    private final String gameSaveFilePath;
 
 
     /**
      * Setze defualt werte, dass ein JSON generiert wird ohne Lücken
      */
     public GameSaver()  {
+        gameSaveFilePath = MAIN.gameSaveFilePath;
         readJSON();
         System.out.println("game.dataManagement.GameSaver: Erster Save TEST gelesen: " + saveState);
 
-
+    }
+    public GameSaver(String gameSaveFilePath)  {
+        this.gameSaveFilePath = gameSaveFilePath;
+        readJSON();
+        System.out.println("game.dataManagement.GameSaver: Erster Save TEST gelesen: " + saveState);
     }
     public void startNewGame(){
         try {
@@ -256,4 +261,5 @@ public class GameSaver {
         }
 
     }
+
 }

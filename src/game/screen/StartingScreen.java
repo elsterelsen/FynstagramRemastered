@@ -12,11 +12,14 @@ package game.screen;
  * -X von 0 bis ButtonCount(z.B 4)
  */
 
-import ea.Bild;
-import ea.Knoten;
-import ea.Text;
+import ea.*;
 import game.MAIN;
 import game.SPIEL;
+import game.dataManagement.ExtraInformation;
+import game.dataManagement.NewGameLoader;
+import game.dataManagement.SaveFileManager;
+
+import java.awt.image.BufferedImage;
 
 
 public class StartingScreen extends Knoten implements Screen{
@@ -24,11 +27,23 @@ public class StartingScreen extends Knoten implements Screen{
     private Bild BackgroundPic;
     private Bild loadingPic;
 
+    private final String gameSaveFilePathTemplate="Assets/Files/saveJsons/GameSave_?.json";
+    private final String npcSaveFilePathTemplate="Assets/Files/saveJsons/NpcSave_?.json";
+    private final String extraInformationPathTemplate="Assets/Files/saveJsons/ExtraInformation_?.json";
+    private final int buttonCount = 5;
+    private Bild[] standardButtons = new Bild[buttonCount];
+    private Knoten standardButtonGroup;
 
-    private int ButtonCount = 5;
-    private Bild[] Buttons = new Bild[ButtonCount];
+    private Bild[] saveButtons = new Bild[buttonCount];
+    private Knoten saveButtonGroup;
+
+    private final int saveFileCount=3;
+    private final boolean[] saveFileEmpty=new boolean[saveFileCount];
+
+    private State state;
 
     private int selection = 0; //von 0 bis ButtonCount -1
+    private int selectedGameSave;
 
     private boolean active = false;//Ob der game.screen.StartingScreen gerade offen ist, oder nicht.
 
@@ -40,7 +55,19 @@ public class StartingScreen extends Knoten implements Screen{
     private Text tb3; //Text fuer Button 3 game.screen.StartingScreen
      */
 
+    private ExtraInformation[] extraInformations;
+
+    private Text saveOverrideWarning;
+
     public StartingScreen() {
+        //initExtraInformations();
+        loadExtraInformations();
+
+        saveOverrideWarning=new Text("Achtung du bist gerade dabei den spielstand zu überschreiben! Zum bestätigen drücke Enter! zum Abbrechen Space/Leertaste",0,0);
+        saveOverrideWarning.positionSetzen(300,400);
+        saveOverrideWarning.farbeSetzen(Farbe.vonString("rot"));
+        selectedGameSave=-1;
+        state=State.STANDARD;
         BackgroundPic = new Bild(0, 0, "./Assets/StartingScreen/StartbilschirmOHNEButtonsundTitel.png");
         loadingPic = new Bild(0, 0, MAIN.playerStillImgPath);
         float xPos = MAIN.x / 2 - (loadingPic.getBreite() / 2);
@@ -49,29 +76,83 @@ public class StartingScreen extends Knoten implements Screen{
         this.add(BackgroundPic);
         this.add(loadingPic);
         loadingPic.sichtbarSetzen(false);
+        standardButtonGroup =new Knoten();
+        saveButtonGroup=new Knoten();
+        selection=0;
         FillButtonObjects();
+        this.add(standardButtonGroup);
     }
 
     private void FillButtonObjects() {
         //System.out.println("FillButtonObjects");
-        for (int i = 0; i < ButtonCount; i++) {
+        for (int i = 0; i < buttonCount; i++) {
             //System.out.println(i);
-            Buttons[i] = new Bild(0, 0, "./Assets/StartingScreen/ButtonFinal" + i + ".png"); //jedes Bild 200 pixel weiter rechts
-            this.add(Buttons[i]);
+            if (i<3&&extraInformations[i].isEmpty()) {
+                saveButtons[i] = new Bild(0, 0, "./Assets/StartingScreen/ButtonSet2_Empty_" + i + ".png"); //jedes Bild 200 pixel weiter rechts
+            }
+            else{
+            saveButtons[i] = new Bild(0, 0, "./Assets/StartingScreen/ButtonSet2_" + i + ".png"); //jedes Bild 200 pixel weiter rechts
+            }
+            saveButtonGroup.add(saveButtons[i]);
+        }
+        for (int i = 0; i < buttonCount; i++) {
+            //System.out.println(i);
+            standardButtons[i] = new Bild(0, 0, "./Assets/StartingScreen/ButtonFinal" + i + ".png"); //jedes Bild 200 pixel weiter rechts
+            standardButtonGroup.add(standardButtons[i]);
+        }
+        add(standardButtonGroup);
+        UpdateButtons();
+    }
+    private void setButtonSetToStandard(boolean b){
+        if(b){
+            add(standardButtonGroup);
+            entfernen(saveButtonGroup);
+        }
+        else{
+            add(saveButtonGroup);
+            entfernen(standardButtonGroup);
         }
         UpdateButtons();
     }
+    private void loadExtraInformations(){
+        extraInformations=new  ExtraInformation[3];
+        for(int i=0;i<3;i++){
+            extraInformations[i]=SaveFileManager.readExtraInformationJSON(new String(extraInformationPathTemplate).replace('?',(char)(i+48) ));
+            System.out.println(extraInformations[i]);
+        }
+
+    }
+    private void initExtraInformations(){
+        for(int i=0;i<3;i++){
+            SaveFileManager.saveExtraInformation(new String(extraInformationPathTemplate).replace('?', (char)(i+48) ),new ExtraInformation(true));
+        }
+    }
+
 
     /**
      * Updatet die Auswahl der Knöpfe(auch graphisch) nach der -selection- Variable
      */
     private void UpdateButtons() {
         this.TextStartScEntfernen();
-        for (int i = 0; i < ButtonCount; i++) {
-            Buttons[i].setOpacity(0.5f);//alle halb sichbar
+        switch (state) {
+            case OLD:
+            case STANDARD:
+            for (int i = 0; i < buttonCount; i++) {
+                standardButtons[i].setOpacity(0.25f);//alle halb sichbar
+            }
+            System.out.println(selection);
+            standardButtons[selection].setOpacity(1f);
+            break;
+            case NEW:
+            case PLAY:
+                for (int i = 0; i < buttonCount; i++) {
+                    saveButtons[i].setOpacity(0.25f);//alle halb sichbar
+                }
+                System.out.println(selection);
+                saveButtons[selection].setOpacity(1f);
+                break;
+
         }
-        System.out.println(selection);
-        Buttons[selection].setOpacity(1f);
     }
 
 
@@ -79,6 +160,7 @@ public class StartingScreen extends Knoten implements Screen{
      * Setzt den Linken Knopf "Aktiv"
      * und rechten nicht mehr "Aktiv"
      */
+
     public void ShiftLeft() {
         selection--;
         if (selection < 0) {
@@ -90,8 +172,8 @@ public class StartingScreen extends Knoten implements Screen{
 
     public void ShiftRight() {
         selection++;
-        if (selection >= ButtonCount) {
-            selection = ButtonCount - 1;//stay at last
+        if (selection >= buttonCount) {
+            selection = buttonCount - 1;//stay at last
         }
         UpdateButtons();
     }
@@ -113,8 +195,8 @@ public class StartingScreen extends Knoten implements Screen{
         BackgroundPic.sichtbarSetzen(active);
         loadingPic.sichtbarSetzen(false);
 
-        for (int i = 0; i < ButtonCount; i++) {
-            Buttons[i].sichtbarSetzen(active);
+        for (int i = 0; i < buttonCount; i++) {
+            standardButtons[i].sichtbarSetzen(active);
         }
     }
 
@@ -160,11 +242,9 @@ public class StartingScreen extends Knoten implements Screen{
     @Override
     public void show() {
         BackgroundPic.sichtbarSetzen(false);
-
+        standardButtonGroup.sichtbarSetzen(false);
+        saveButtonGroup.sichtbarSetzen(false);
         loadingPic.sichtbarSetzen(true);
-        for (int i = 0; i < ButtonCount; i++) {
-            Buttons[i].sichtbarSetzen(false);
-        }
         SPIEL.currentScreen=ScreenType.STARTINGSCREEN;
     }
 
@@ -173,4 +253,158 @@ public class StartingScreen extends Knoten implements Screen{
         this.setActive(false);
         SPIEL.currentScreen=ScreenType.GAMESCREEN;
     }
+    public void select(SPIEL game,WindowScreen settingScreen,WindowScreen aboutScreen){
+        int sel = selection;
+        switch(state){
+            case OLD:
+                switch (sel) {
+                    case (0):
+                        System.out.println("PLAY: Spiel wird gestartet");
+                        show();
+                        game.Konstruktor(MAIN.npcFilePath,MAIN.gameSaveFilePath);
+                        break;
+
+                    case (1):
+                        System.out.println("NEW GAME: Spiel überschriebt Dateien");
+                        show();
+                        NewGameLoader gl = new NewGameLoader();
+                        //System.out.println("LADEN FERTIG!!");
+                        game.Konstruktor(MAIN.npcFilePath,MAIN.gameSaveFilePath);
+                        break;
+
+                    case (2):
+                        System.out.println("EXIT KNOPF GEDRÜCKT: Spiel wird geschlossen");
+                        game.schliessen();
+                        break;
+
+                    case (3):
+                        System.out.println("ABOUT GEDRÜCKT:AboutScreenWir gestartet");
+                        settingScreen.hide();
+                        aboutScreen.toggleWindow();
+                        break;
+
+                    case (4):
+                        System.out.println("SETTINGS GEDRÜCKT:SettingScreen wird gestartet");
+                        aboutScreen.hide();
+                        settingScreen.toggleWindow();
+                        break;
+                }
+                break;
+            case STANDARD:
+                switch (sel) {
+                    case (0):
+                        System.out.println("PLAY: Spielstand auswählen zum starten");
+                        state=State.PLAY;
+                        entfernen(standardButtonGroup);
+                        add(saveButtons);
+                        selection=0;
+                        UpdateButtons();
+
+                        break;
+
+                    case (1):
+                        System.out.println("NEW GAME: Spielstand auswählen um neues Spiel zu speichern");
+                        state=State.NEW;
+                        entfernen(standardButtonGroup);
+                        add(saveButtons);
+                        selection=0;
+                        UpdateButtons();
+                        break;
+
+                    case (2):
+                        System.out.println("EXIT KNOPF GEDRÜCKT: Spiel wird geschlossen");
+                        game.schliessen();
+                        break;
+
+                    case (3):
+                        System.out.println("ABOUT GEDRÜCKT:AboutScreen wird gestartet");
+                        settingScreen.hide();
+                        aboutScreen.toggleWindow();
+                        state=State.ABOUT;
+                        break;
+
+                    case (4):
+                        System.out.println("SETTINGS GEDRÜCKT:SettingScreen wird gestartet");
+                        aboutScreen.hide();
+                        settingScreen.toggleWindow();
+                        break;
+                }
+                break;
+            case WAITING:
+                entfernen(saveOverrideWarning);
+
+                    System.out.println("NEW GAME: Spiel überschreibt Datei: " + new String(gameSaveFilePathTemplate).replace('?', (char) (selectedGameSave + 48)));
+                    show();
+                    NewGameLoader ngl = new NewGameLoader(new String(npcSaveFilePathTemplate).replace('?', (char) (selectedGameSave + 48)), new String(gameSaveFilePathTemplate).replace('?', (char) (selectedGameSave + 48)));
+                    SaveFileManager.saveExtraInformation(new String(extraInformationPathTemplate).replace('?', (char) (selectedGameSave + 48)), new ExtraInformation(false));
+                    //System.out.println("LADEN FERTIG!!");
+                    game.Konstruktor(new String(npcSaveFilePathTemplate).replace('?', (char) (selectedGameSave + 48)), new String(gameSaveFilePathTemplate).replace('?', (char) (selectedGameSave + 48)));
+
+                break;
+
+            case NEW:
+                switch(selection){
+                    case (3):
+                        System.out.println("Back GEDRÜCKT: state set to standard");
+                        setButtonSetToStandard(true);
+                        state=State.STANDARD;
+                        break;
+
+                    case (4):
+                        System.out.println("SETTINGS GEDRÜCKT:SettingScreen wird gestartet");
+                        settingScreen.show();
+                        break;
+                        default:
+                        if(!extraInformations[sel].isEmpty()){
+
+                            /**
+
+                             hier muss noch eine visuelle Warnung vorm überschreiben eines belegten speicherstandes eingefügt werden (einfügen in state enum evtl?)
+
+                             Hier ist noch Baustelle!!!
+                             **/
+                            saveOverrideWarning.setzeInhalt("Bist du sicher, dass du Spielstand "+selection+" überschreiben willst? JA: J/Enter NEIN: N");
+                            add(saveOverrideWarning);
+                            selectedGameSave=selection;
+                            state=State.WAITING;
+                        }
+                        else{
+                            System.out.println("NEW GAME: Spiel überschreibt Datei(die leer war): "+new String(gameSaveFilePathTemplate).replace('?',(char)(selection+48)));
+                            show();
+                            NewGameLoader gl = new NewGameLoader(new String(npcSaveFilePathTemplate).replace('?',(char)(selection+48)),new String(gameSaveFilePathTemplate).replace('?',(char)(selection+48)));
+                            SaveFileManager.saveExtraInformation(new String(extraInformationPathTemplate).replace('?',(char)(selection+48)),new ExtraInformation(false));
+                            //System.out.println("LADEN FERTIG!!");
+                            game.Konstruktor(new String(npcSaveFilePathTemplate).replace('?',(char)(selection+48)),new String(gameSaveFilePathTemplate).replace('?',(char)(selection+48)));
+                        }
+
+
+                }
+
+                break;
+            case PLAY:
+                break;
+            case ABOUT:
+                aboutScreen.hide();
+                state=State.STANDARD;
+
+                break;
+            case SETTINGS:
+                settingScreen.hide();
+                state=State.STANDARD;
+                break;
+
+        }
+    }
+    public void setStateToStandard(){
+        if(state!=State.ABOUT&&state!=State.SETTINGS){
+            state=State.STANDARD;
+            saveButtonGroup.sichtbarSetzen(false);
+            standardButtonGroup.sichtbarSetzen(true);
+        }
+    }
+    enum State{
+        STANDARD,NEW,PLAY,OLD,ABOUT,SETTINGS,WAITING
+    }
+
+
 }
