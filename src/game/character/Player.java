@@ -17,10 +17,14 @@ public class Player extends Knoten {
     private float posY;
     private int money;
 
-    private int walkspeed; // Laufgeschwindigkeit
-
-
-    private ImageCollection IC2;
+    private int speed; // Laufgeschwindigkeit
+    private final int walkspeed;
+    private final int bikespeed;
+    private final int carspeed;
+    private MovementState movement;
+    private final ImageCollection walkingCollection;
+    private final ImageCollection bikingCollection;
+    private final ImageCollection carCollection;
 
     public Player(float posX, float posY, GameSaver gs) {
         this.gamesaver = gs;
@@ -28,11 +32,26 @@ public class Player extends Knoten {
         this.posY = posY;
         this.money = 0;
 
-        IC2 = new ImageCollection(this.posX, this.posY, "./Assets/SpielerTest/BasicMale");
-        IC2.Init();
-        this.add(IC2);
+        walkingCollection = new ImageCollection(this.posX, this.posY, "./Assets/SpielerTest/BasicMale");
+        walkingCollection.Init();
+        this.add(walkingCollection);
+
+        bikingCollection = new ImageCollection(this.posX, this.posY, "./Assets/SpielerTest/BasicMale");
+        bikingCollection.Init();
+        this.add(bikingCollection);
+        bikingCollection.sichtbarSetzen(false);
+
+        carCollection = new ImageCollection(this.posX, this.posY, "./Assets/SpielerTest/BasicMale");
+        carCollection.Init();
+        this.add(carCollection);
+        carCollection.sichtbarSetzen(false);
+
+        movement=MovementState.WALKING;
 
         walkspeed = gamesaver.getWalkspeed();
+        speed=walkspeed;
+        bikespeed=walkspeed*3;
+        carspeed=bikespeed*2;
     }
 
     @Override
@@ -68,37 +87,49 @@ public class Player extends Knoten {
     float lastX = posX;
 
     public void WalkLeft() {
-        IC2.walkLeft(walkspeed);
+        walkingCollection.walkLeft(speed);
+        bikingCollection.walkLeft(speed);
+        carCollection.walkLeft(speed);
         //this.verschieben(-walkspeed, 0);
-        this.posX = posX - walkspeed;
+        this.posX = posX - speed;
         //IC.verschieben(-walkspeed,0);
     }
 
     public void WalkRight() {
-        IC2.walkRight(walkspeed);
+        walkingCollection.walkRight(speed);
+        bikingCollection.walkRight(speed);
+        carCollection.walkRight(speed);
         //this.verschieben(walkspeed, 0);
-        this.posX = posX + walkspeed;
+        this.posX = posX + speed;
         //IC.verschieben(walkspeed,0);
     }
 
     public void WalkBottom() {
-        IC2.walkBottom(walkspeed);
-        this.posY = posY + walkspeed;
+        walkingCollection.walkBottom(speed);
+        carCollection.walkBottom(speed);
+        bikingCollection.walkBottom(speed);
+        this.posY = posY + speed;
         //this.verschieben(0, walkspeed);
         //IC.verschieben(0, walkspeed);
     }
 
     public void WalkTop() {
-        IC2.walkTop(walkspeed);
-        this.posY = posY - walkspeed;
+        walkingCollection.walkTop(speed);
+        bikingCollection.walkTop(speed);
+        carCollection.walkTop(speed);
+        this.posY = posY - speed;
         //this.verschieben(0,-walkspeed);
         //IC.verschieben(0, -walkspeed);
     }
 
     public void standStill() {
         //System.out.println("STANDSTILL");
-        IC2.resetStep();
-        IC2.standStill();
+        walkingCollection.resetStep();
+        walkingCollection.standStill();
+        bikingCollection.resetStep();
+        bikingCollection.standStill();
+        carCollection.resetStep();
+        carCollection.standStill();
     }
 
     public int getMoney() {
@@ -118,8 +149,8 @@ public class Player extends Knoten {
         return (posY + this.getHoehe() / 2);
     }
 
-    public int getWalkspeed() {
-        return walkspeed;
+    public int getSpeed() {
+        return speed;
     }
 
     public String getName() {
@@ -132,6 +163,30 @@ public class Player extends Knoten {
 
     public float getPosY() {
         return posY;
+    }
+
+    public void changeMovementTo(MovementState state){
+        movement=state;
+        switch(movement){
+            case CAR:
+                speed=carspeed;
+                walkingCollection.sichtbarSetzen(true);
+                bikingCollection.sichtbarSetzen(false);
+                carCollection.sichtbarSetzen(false);
+                break;
+            case BIKE:
+                speed=bikespeed;
+                walkingCollection.sichtbarSetzen(false);
+                bikingCollection.sichtbarSetzen(true);
+                carCollection.sichtbarSetzen(false);
+                break;
+            case WALKING:
+                speed=walkspeed;
+                walkingCollection.sichtbarSetzen(false);
+                bikingCollection.sichtbarSetzen(false);
+                carCollection.sichtbarSetzen(true);
+                break;
+        }
     }
 }
 

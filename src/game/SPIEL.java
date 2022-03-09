@@ -3,7 +3,6 @@ package game;
 import ea.*;
 import game.character.*;
 import game.dataManagement.GameSaver;
-import game.dataManagement.NewGameLoader;
 import game.debuging.DebugAnzeige;
 import game.dialog.DialogController;
 import game.dialog.HelpingArrow;
@@ -271,7 +270,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
 
 
             if (!DialogController.isActive() && !StartSc.isActive() && !itemAnimator.isActiv() && !settingScreen.isActive()) {
-                int walkspeed = ActivePlayer.getWalkspeed();
+                int walkspeed = ActivePlayer.getSpeed();
 
                 if (tasteGedrueckt(Taste.W)) {
                     DP.positionSetzen(ActivePlayer.getPosX(), ActivePlayer.getPosY() - walkspeed);

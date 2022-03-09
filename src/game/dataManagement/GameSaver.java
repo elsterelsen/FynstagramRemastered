@@ -8,8 +8,6 @@ import game.character.Player;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.*;
 
 public class GameSaver {
@@ -60,7 +58,7 @@ public class GameSaver {
         saveState.setName(Player.getName());
         saveState.setPosX((int)Player.getPosX());
         saveState.setPosY((int)Player.getPosY());
-        saveState.setWalkspeed(Player.getWalkspeed());
+        saveState.setWalkspeed(Player.getSpeed());
 
         //saveJSON();
 
