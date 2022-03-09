@@ -19,8 +19,6 @@ import game.dataManagement.ExtraInformation;
 import game.dataManagement.NewGameLoader;
 import game.dataManagement.SaveFileManager;
 
-import java.awt.image.BufferedImage;
-
 
 public class StartingScreen extends Knoten implements Screen{
 
@@ -58,7 +56,7 @@ public class StartingScreen extends Knoten implements Screen{
     private ExtraInformation[] extraInformations;
 
     private Text saveOverrideWarning;
-    private Text thisEmptyText;
+    private Text newGameConfirmationText;
 
     public StartingScreen() {
         //initExtraInformations();
@@ -84,10 +82,10 @@ public class StartingScreen extends Knoten implements Screen{
         selection=0;
         FillButtonObjects();
         this.add(standardButtonGroup);
-        thisEmptyText=new Text("Dieser Speicherplatz ist leer!",20,574);
-        thisEmptyText.setzeFarbe("rot");
-        add(thisEmptyText);
-        thisEmptyText.sichtbarSetzen(false);
+        newGameConfirmationText =new Text("Neues Spiel. Zum bestätigen ENTER",20,574);
+        newGameConfirmationText.setzeFarbe("blau");
+        add(newGameConfirmationText);
+        newGameConfirmationText.sichtbarSetzen(false);
     }
 
     private void FillButtonObjects() {
@@ -255,7 +253,7 @@ public class StartingScreen extends Knoten implements Screen{
 
     @Override
     public void show() {
-        thisEmptyText.sichtbarSetzen(false);
+        newGameConfirmationText.sichtbarSetzen(false);
         BackgroundPic.sichtbarSetzen(false);
         standardButtonGroup.sichtbarSetzen(false);
         saveButtonGroup.sichtbarSetzen(false);
@@ -345,7 +343,7 @@ public class StartingScreen extends Knoten implements Screen{
                 break;
             case WAITING:
                 entfernen(saveOverrideWarning);
-
+                    newGameConfirmationText.sichtbarSetzen(false);
                     System.out.println("NEW GAME: Spiel überschreibt Datei: " + new String(gameSaveFilePathTemplate).replace('?', (char) (selectedGameSave + 48)));
                     show();
                     NewGameLoader ngl = new NewGameLoader(new String(npcSaveFilePathTemplate).replace('?', (char) (selectedGameSave + 48)), new String(gameSaveFilePathTemplate).replace('?', (char) (selectedGameSave + 48)));
@@ -373,7 +371,8 @@ public class StartingScreen extends Knoten implements Screen{
 
                         default:
                         if(!extraInformations[sel].isEmpty()){
-                            saveOverrideWarning.setzeInhalt("Bist du sicher, dass du Spielstand "+selection+" überschreiben willst? JA: J/Enter NEIN: N");
+                            saveOverrideWarning.setzeInhalt("Bist du sicher, dass du Spielstand "+selection+" überschreiben willst? JA: Enter NEIN: N");
+                            saveOverrideWarning.leuchtetSetzen(true);
                             add(saveOverrideWarning);
                             saveOverrideWarning.sichtbarSetzen(true);
                             selectedGameSave=selection;
@@ -410,9 +409,11 @@ public class StartingScreen extends Knoten implements Screen{
 
                     default:
                         if(extraInformations[sel].isEmpty()){
-                            thisEmptyText.sichtbarSetzen(true);
-                            thisEmptyText.positionSetzen(20+selection*300,574);
-                            state=State.THISEMPTY;
+                            newGameConfirmationText.sichtbarSetzen(true);
+                            newGameConfirmationText.positionSetzen(20+selection*300,574);
+                            state=State.WAITING;
+                            selectedGameSave=selection;
+
                         }
                         else{
                             System.out.println("Starte Spielstand von: "+new String(gameSaveFilePathTemplate).replace('?',(char)(selection+48)));
@@ -432,10 +433,7 @@ public class StartingScreen extends Knoten implements Screen{
                 settingScreen.hide();
                 state=State.STANDARD;
                 break;
-            case THISEMPTY:
-                thisEmptyText.sichtbarSetzen(false);
-                state=State.PLAY;
-                break;
+
 
         }
     }
@@ -446,11 +444,11 @@ public class StartingScreen extends Knoten implements Screen{
             saveOverrideWarning.sichtbarSetzen(false);
             saveButtonGroup.sichtbarSetzen(false);
             standardButtonGroup.sichtbarSetzen(true);
-            thisEmptyText.sichtbarSetzen(false);
+            newGameConfirmationText.sichtbarSetzen(false);
         }
     }
     enum State{
-        STANDARD,NEW,PLAY,OLD,ABOUT,SETTINGS,WAITING,THISEMPTY;
+        STANDARD,NEW,PLAY,OLD,ABOUT,SETTINGS,WAITING;
         public boolean isButtonState(){
             return this.ordinal()<4;
         }
