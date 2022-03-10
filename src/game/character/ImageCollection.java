@@ -48,26 +48,25 @@ class ImageCollection extends Knoten {
 
     private int stepDistance = 20; // Distanz die einen Schritt ausmacht
 
-
     //Matrix containing the PictureArrays below
-    private final Bild[][] Imgs = new Bild[4][];
+    private final Bild[][] Imgs;
     //Listen mit >Bild< Objekten
-    private final Bild[] ImgL = new Bild[4];  //Links
-    private final Bild[] ImgR = new Bild[4];  //Recht
-    private final Bild[] ImgT = new Bild[3];  //Top
-    private final Bild[] ImgB = new Bild[3];  //Bottom
-
-
-    private final int idleAnimationLength =4;
+    private final Bild[] ImgL;  //Links
+    private final Bild[] ImgR;  //Recht
+    private final Bild[] ImgT;  //Top
+    private final Bild[] ImgB;  //Bottom
+    private final int idleAnimationLength;
     private long lastChangedIdle=0;
     //Matrix containing the PictureArrays below
-    private final Bild[][] IdleImgs = new Bild[4][];
+    private final Bild[][] IdleImgs;
     //Listen mit >Bild< Objekten for idle animation
-    private final Bild[] ImgBIL = new Bild[idleAnimationLength];  //Links
-    private final Bild[] ImgBIR = new Bild[idleAnimationLength];  //Recht
-    private final Bild[] ImgBIT = new Bild[idleAnimationLength];  //Top
-    private final Bild[] ImgBIB = new Bild[idleAnimationLength];  //Bottom
+    private final Bild[] ImgBIL;  //Links
+    private final Bild[] ImgBIR;  //Recht
+    private final Bild[] ImgBIT;  //Top
+    private final Bild[] ImgBIB;  //Bottom
 
+    private final boolean idleAnimation;
+    private final boolean movementAnimation;
 
     private Bild stillImg;
 
@@ -79,12 +78,76 @@ class ImageCollection extends Knoten {
      * @param MainDir Übergeordnetes Verzeichnis der Bilder
      */
     public ImageCollection(float x, float y, String MainDir) {
+        movementAnimation=true;
+        idleAnimation=true;
         this.posX = x;
         this.posY = y;
         this.MainDir = MainDir;
+        Imgs = new Bild[4][];
+        //Listen mit >Bild< Objekten
+        ImgL = new Bild[4];  //Links
+        ImgR = new Bild[4];  //Recht
+        ImgT = new Bild[3];  //Top
+        ImgB = new Bild[3];  //Bottom
+
+        idleAnimationLength =4;
+        lastChangedIdle=0;
+        //Matrix containing the PictureArrays below
+        IdleImgs = new Bild[4][];
+        //Listen mit >Bild< Objekten for idle animation
+        ImgBIL = new Bild[idleAnimationLength];  //Links
+        ImgBIR = new Bild[idleAnimationLength];  //Recht
+        ImgBIT = new Bild[idleAnimationLength];  //Top
+        ImgBIB = new Bild[idleAnimationLength];  //Bottom
+
         lookingDirection=Direction.Bottom;
 
         String path = MAIN.playerStillImgPath;
+        try {
+            stillImg = new Bild(posX, posY, path);
+            this.add(stillImg);
+        } catch (Exception e) {
+            System.out.println("game.ImageCollection2: Fehler beim Lesen des still-Bilds an der Stelle: + " + path);
+        }
+        Imgs[0]=ImgB;
+        Imgs[1]=ImgR;
+        Imgs[2]=ImgT;
+        Imgs[3]=ImgL;
+
+        IdleImgs[0]=ImgBIB;
+        IdleImgs[1]=ImgBIR;
+        IdleImgs[2]=ImgBIT;
+        IdleImgs[3]=ImgBIL;
+
+
+
+    }
+    public ImageCollection(float x, float y, String MainDir,String stillImgPath,int movementPictures,int idlePictures) {
+        this.posX = x;
+        this.posY = y;
+        this.MainDir = MainDir;
+        idleAnimation=idlePictures>1;
+        movementAnimation=movementPictures>1;
+        Imgs = new Bild[4][];
+        //Listen mit >Bild< Objekten
+        ImgL = new Bild[movementPictures];  //Links
+        ImgR = new Bild[movementPictures];  //Recht
+        ImgT = new Bild[movementPictures];  //Top
+        ImgB = new Bild[movementPictures];  //Bottom
+
+        idleAnimationLength =idlePictures;
+        lastChangedIdle=0;
+        //Matrix containing the PictureArrays below
+        IdleImgs = new Bild[4][];
+        //Listen mit >Bild< Objekten for idle animation
+        ImgBIL = new Bild[idleAnimationLength];  //Links
+        ImgBIR = new Bild[idleAnimationLength];  //Recht
+        ImgBIT = new Bild[idleAnimationLength];  //Top
+        ImgBIB = new Bild[idleAnimationLength];  //Bottom
+
+        lookingDirection=Direction.Bottom;
+
+        String path = stillImgPath;
         try {
             stillImg = new Bild(posX, posY, path);
             this.add(stillImg);
@@ -229,23 +292,26 @@ class ImageCollection extends Knoten {
 
 
     public void walkLeft(int dis) {
+        if(!movementAnimation){stepL=0;}
         lookingDirection=Direction.Left;
         distanceL = distanceL + dis;
         HideAll();
-        ImgL[stepL].sichtbarSetzen(true);
-        if (distanceL >= stepDistance) {
+            ImgL[stepL].sichtbarSetzen(true);
+            if (distanceL >= stepDistance) {
 
-            stepL++;
-            if (stepL >= ImgL.length) {
-                stepL = 1;
+                stepL++;
+                if (stepL >= ImgL.length) {
+                    stepL = 1;
+                }
+                distanceL = 0;
+
             }
-            distanceL = 0;
 
-        }
         this.verschieben(-dis, 0);
     }
 
     public void walkRight(int dis) {
+        if(!movementAnimation){stepR=0;}
         lookingDirection=Direction.Right;
         distanceR = distanceR + dis;
         HideAll();
@@ -263,6 +329,7 @@ class ImageCollection extends Knoten {
     }
 
     public void walkTop(int dis) {
+        if(!movementAnimation){stepT=0;}
         lookingDirection=Direction.Top;
         distanceT = distanceT + dis;
         HideAll();
@@ -280,6 +347,7 @@ class ImageCollection extends Knoten {
     }
 
     public void walkBottom(int dis) {
+        if(!movementAnimation){stepB=0;}
         lookingDirection=Direction.Bottom;
         distanceB = distanceB + dis;
         HideAll();
@@ -393,6 +461,8 @@ class ImageCollection extends Knoten {
         posX = posX + dX;
         posY = posY + dY;
         super.verschieben(dX, dY);
+
     }
+
 }
 

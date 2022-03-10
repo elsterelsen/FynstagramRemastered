@@ -237,6 +237,7 @@ public class GameMap extends Knoten {
     }
 
     public void enterHouse(int HouseN) {
+        player.setToWalking();
         this.sichtbarSetzen(false);
         backgroundImg.sichtbarSetzen(true);
 

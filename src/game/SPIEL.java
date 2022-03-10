@@ -133,7 +133,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
         debugAnzeige6 = new DebugAnzeige(1300, 0);
         debugAnzeige7 = new DebugAnzeige(0, 30); //dialogPos
         debugAnzeige8 = new DebugAnzeige(300, 30);
-        //debugAnzeige9 = new game.debuging.DebugAnzeige(650, 30);
+        debugAnzeige9 = new DebugAnzeige(650, 30);
         debugAnzeige10 = new DebugAnzeige(1000, 30); //LastSelfBoolean
         Minigame2 = new Minigame2(ActivePlayer);
         itemAnimator = new ItemAnimation();
@@ -184,7 +184,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
         statischeWurzel.add(debugAnzeige6);
         statischeWurzel.add(debugAnzeige7);
         statischeWurzel.add(debugAnzeige8);
-        //statischeWurzel.add(debugAnzeige9);
+        statischeWurzel.add(debugAnzeige9);
         statischeWurzel.add(debugAnzeige10);
 
         statischeWurzel.add(computer);
@@ -262,7 +262,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
             //debugAnzeige6.SetContent("PlayingLastLine: " + DialogController.isPlayingLastLine());
             debugAnzeige7.SetContent("CurrentDialogCode: " + DialogController.getCurrentDialogCode());
             debugAnzeige8.SetContent("relativePos: " + map.getOffsetPosString());
-            //debugAnzeige9.SetContent("OneButtonMode?: " + DialogController.isOneButtonMode());
+            debugAnzeige9.SetContent("Speed: " + ActivePlayer.getSpeed());
             //debugAnzeige10.SetContent("LastSelf: " + DialogController.isPlayingLastLine());
             debugAnzeige10.SetContent("HouseNUmber: " + map.getHouseNumber());
 
@@ -277,7 +277,6 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
                     if (map.isWalkable2(DP, ActivePlayer)) {
                         ActivePlayer.WalkTop();
                     }
-
                 }
                 else if (tasteGedrueckt(Taste.S)) {
                     DP.positionSetzen(ActivePlayer.getPosX(), ActivePlayer.getPosY() + walkspeed);
@@ -300,6 +299,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
                     }
 
                 }
+
                 if(!tasteGedrueckt(Taste.W) && !tasteGedrueckt(Taste.S) && !tasteGedrueckt(Taste.A) && !tasteGedrueckt(Taste.D)){ //Es wird keine der Tasten gedrückt
                     ActivePlayer.standStill();
                 }
@@ -405,6 +405,14 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
                     } else if (tastenkuerzel == 31) {
                         System.out.println("game.SPIEL: ENTER GEDRÜCKt");
                         DialogController.input("enter");
+                    }
+
+                }
+                else if(!map.isVisiting()) {
+                    if (tastenkuerzel == Taste.B) {
+                        ActivePlayer.toggleBike();
+                    } else if (tastenkuerzel == Taste.C) {
+                        ActivePlayer.toggleCar();
                     }
                 }
                 break;

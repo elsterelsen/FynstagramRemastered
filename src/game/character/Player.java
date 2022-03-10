@@ -32,19 +32,21 @@ public class Player extends Knoten {
         this.posY = posY;
         this.money = 0;
 
-        walkingCollection = new ImageCollection(this.posX, this.posY, "./Assets/SpielerTest/BasicMale");
-        walkingCollection.Init();
-        this.add(walkingCollection);
 
-        bikingCollection = new ImageCollection(this.posX, this.posY, "./Assets/SpielerTest/BasicMale");
+        carCollection = new ImageCollection(this.posX, this.posY, "./Assets/SpielerTest/Car/","Assets/SpielerTest/Car/still.png",1,1);
+        carCollection.Init();
+        this.add(carCollection);
+        carCollection.sichtbarSetzen(false);
+
+        bikingCollection = new ImageCollection(this.posX, this.posY, "./Assets/SpielerTest/Biking/","Assets/SpielerTest/Biking/still.png",1,1);
         bikingCollection.Init();
         this.add(bikingCollection);
         bikingCollection.sichtbarSetzen(false);
 
-        carCollection = new ImageCollection(this.posX, this.posY, "./Assets/SpielerTest/BasicMale");
-        carCollection.Init();
-        this.add(carCollection);
-        carCollection.sichtbarSetzen(false);
+        walkingCollection = new ImageCollection(this.posX, this.posY, "./Assets/SpielerTest/BasicMale");
+        walkingCollection.Init();
+        this.add(walkingCollection);
+
 
         movement=MovementState.WALKING;
 
@@ -165,14 +167,14 @@ public class Player extends Knoten {
         return posY;
     }
 
-    public void changeMovementTo(MovementState state){
+    private void changeMovementTo(MovementState state){
         movement=state;
         switch(movement){
             case CAR:
                 speed=carspeed;
-                walkingCollection.sichtbarSetzen(true);
+                walkingCollection.sichtbarSetzen(false);
                 bikingCollection.sichtbarSetzen(false);
-                carCollection.sichtbarSetzen(false);
+                carCollection.sichtbarSetzen(true);
                 break;
             case BIKE:
                 speed=bikespeed;
@@ -182,11 +184,33 @@ public class Player extends Knoten {
                 break;
             case WALKING:
                 speed=walkspeed;
-                walkingCollection.sichtbarSetzen(false);
+                walkingCollection.sichtbarSetzen(true);
                 bikingCollection.sichtbarSetzen(false);
-                carCollection.sichtbarSetzen(true);
+                carCollection.sichtbarSetzen(false);
                 break;
         }
+    }
+    public void toggleBike(){
+        if(movement==MovementState.BIKE){
+            changeMovementTo(MovementState.WALKING);
+        }
+        else{
+            changeMovementTo(MovementState.BIKE);
+        }
+    }
+    public void toggleCar(){
+        if(movement==MovementState.CAR){
+            changeMovementTo(MovementState.WALKING);
+        }
+        else{
+            changeMovementTo(MovementState.CAR);
+        }
+    }
+    public void setToWalking(){
+        changeMovementTo(MovementState.WALKING);
+    }
+    public enum MovementState {
+        WALKING,BIKE,CAR
     }
 }
 

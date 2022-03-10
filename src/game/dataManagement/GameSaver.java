@@ -58,7 +58,7 @@ public class GameSaver {
         saveState.setName(Player.getName());
         saveState.setPosX((int)Player.getPosX());
         saveState.setPosY((int)Player.getPosY());
-        saveState.setWalkspeed(Player.getSpeed());
+        //saveState.setWalkspeed(Player.getSpeed());
 
         //saveJSON();
 
