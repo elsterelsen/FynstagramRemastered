@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import game.MAIN;
 import game.character.Player;
+import game.dialog.DialogController;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -58,6 +59,7 @@ public class GameSaver {
         saveState.setName(Player.getName());
         saveState.setPosX((int)Player.getPosX());
         saveState.setPosY((int)Player.getPosY());
+
         //saveState.setWalkspeed(Player.getSpeed());
 
         //saveJSON();

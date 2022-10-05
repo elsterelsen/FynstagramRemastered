@@ -302,6 +302,11 @@ public class DialogController extends Knoten {
         DialogLine lastLine = dialogLines.get(NPC_Controller2.getNpcLastLine(npcID));
         if (lastLine == null) {
             updateTextContent("FEHLER DER NPC HAT KEINE LASTLINE");
+            try{Thread.sleep(50);}
+            catch(Exception e){
+                e.printStackTrace();
+            }
+            endDialog();
         } else {
             displayDialogLine(NPC_Controller2.getNpcLastLine(npcID));
         }

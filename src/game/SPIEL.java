@@ -303,7 +303,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
                 if(!tasteGedrueckt(Taste.W) && !tasteGedrueckt(Taste.S) && !tasteGedrueckt(Taste.A) && !tasteGedrueckt(Taste.D)){ //Es wird keine der Tasten gedrückt
                     ActivePlayer.standStill();
                 }
-                else{//Wenn eine belibige teste Gedrückt wird
+                else{//Wenn eine belibige Taste Gedrückt wird
                     startDialog=true;
                 }
             }
@@ -357,7 +357,8 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
             tickCounter++;
             if (tickCounter > 400) { //alle vier sekunden
                 tickCounter = 0;
-                gamesaver.saveJSON();
+                gamesaver.setTemporalPosition(DialogController.getGlobalTemporalPosition());
+                //gamesaver.saveJSON();
             }
         }
 
@@ -403,7 +404,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
                     } else if (tastenkuerzel == 3) {
                         DialogController.input("rechts");
                     } else if (tastenkuerzel == 31) {
-                        System.out.println("game.SPIEL: ENTER GEDRÜCKt");
+                        System.out.println("game.SPIEL(Gamescreen): ENTER GEDRÜCKt");
                         DialogController.input("enter");
                     }
 
@@ -420,8 +421,9 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
 
                 break;
             case COMPUTERSCREEN:
-                    System.out.println("game.SPIEL: ENTER GEDRÜCKT");
+                    System.out.println("game.SPIEL(Computerscreen): ENTER GEDRÜCKT");
                     computer.hide();
+                    currentScreen=ScreenType.GAMESCREEN;
                     break;
             case ABOUTSCREEN:
                 aboutScreen.hide();
@@ -437,6 +439,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
             if (tastenkuerzel == 8) {//I als in
                 if (computer.isActiv()) {
                     computer.hide();
+                    currentScreen=ScreenType.GAMESCREEN;
                 } else {
                     computer.hide();
                 }

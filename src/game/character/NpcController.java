@@ -109,8 +109,8 @@ public class NpcController extends Knoten {
     }
 
     public String getNpcLastLine(String npcID) {
-        //System.out.println("NPC_Controller: Es wird nach dem DialogCode für den Spieler mit der ID-> gefragt: " + npcID);
-        //System.out.println("NPC_Controller: Das game.NPC2 Objekt dazu sieht so aus: " + NPCs.get(npcID).toString());
+        System.out.println("NPC_Controller: Es wird nach dem DialogCode für den Spieler mit der ID-> gefragt: " + npcID);
+        System.out.println("NPC_Controller: Das game.NPC2 Objekt dazu sieht so aus: " + NPCs.get(npcID).toString());
         return NPCs.get(npcID).lastLine;
     }
 
