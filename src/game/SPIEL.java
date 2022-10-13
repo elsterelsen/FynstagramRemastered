@@ -9,6 +9,7 @@ import game.dialog.HelpingArrow;
 import game.item.ItemAnimation;
 import game.item.ItemController;
 import game.map_collision.GameMap;
+import game.minimap.Minimap;
 import game.screen.*;
 import game.screen.minigame.BallTest;
 import game.screen.minigame.Minigame2;
@@ -85,7 +86,8 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
 
     //Screens
     public static ScreenType currentScreen;
-
+    //Minimap
+    private Minimap minimap;
 
     public SPIEL() {
         super(MAIN.x, MAIN.y, "Fynstagram 2020");//windowsize kann nicht mit variable gemacht werden.
@@ -140,7 +142,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
         itemController = new ItemController(ActivePlayer, gamesaver, DialogController, itemAnimator, soundController);
         map = new GameMap(NpcController, soundController, ActivePlayer, gamesaver, itemController);
         helpingArrow = new HelpingArrow(DialogController, ActivePlayer, map);
-
+        minimap=new Minimap();
 
 
         if (false) {
@@ -173,6 +175,7 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
         //statischeWurzel.add(HouseLoader1);
         statischeWurzel.add(DialogController);
 
+        statischeWurzel.add(minimap);
         statischeWurzel.add(Minigame2);
 
 
@@ -265,6 +268,8 @@ public class SPIEL extends Game implements TastenLosgelassenReagierbar, Ticker, 
             debugAnzeige9.SetContent("Speed: " + ActivePlayer.getSpeed());
             //debugAnzeige10.SetContent("LastSelf: " + DialogController.isPlayingLastLine());
             debugAnzeige10.SetContent("HouseNUmber: " + map.getHouseNumber());
+
+            minimap.update(playerX,playerY);
 
             DP.positionSetzen(playerX, playerY);
 

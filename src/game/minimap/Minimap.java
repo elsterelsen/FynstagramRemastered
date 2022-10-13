@@ -1,5 +1,6 @@
 package game.minimap;
 
+import ea.Bild;
 import ea.Knoten;
 import game.minimap.punkte.HauptPunkt;
 import game.minimap.punkte.NebenPunkt;
@@ -11,8 +12,16 @@ import java.util.ArrayList;
 public class Minimap extends Knoten {
     private ArrayList<Punkt> punkte;
     private final int minimapToMapRatio=2000;//-> minimapt zeigt auf ihrem radius 2000 Pixel der Map
+    private final Bild img =new Bild("Assets/Map/Minimap/Circle.png");
 
-
+    public Minimap(){
+        img.positionSetzen(10,510);
+        img.sichtbarSetzen(true);
+        punkte=new ArrayList<Punkt>();
+        //test
+        this.add(img);
+        addPunkt(1000,2000,true);
+    }
     public Punkt addPunkt(int x,int y,boolean istHauptPunkt){
         Punkt newPunkt;
         if(istHauptPunkt){
@@ -26,7 +35,9 @@ public class Minimap extends Knoten {
         return newPunkt;
     }
     public void update(int playerX,int playerY){
-
+        for(Punkt p : punkte){
+            p.update(playerX,playerY,minimapToMapRatio, img.positionX(), img.positionY(), img.normaleBreite()/2);
+        }
     }
 
 }

@@ -8,8 +8,8 @@ import java.util.ArrayList;
 public class Punkt extends Knoten {
     private final int x;
     private final int y;
-    public final Bild bigImg=new Bild("");
-    public final Bild smallImg=new Bild("");
+    public final Bild bigImg=new Bild("Assets/Map/Minimap/HauptPunktKlein.png");
+    public final Bild smallImg=new Bild("Assets/Map/Minimap/HauptPunktKlein.png");
 
 
     public Punkt(int x, int y) {
