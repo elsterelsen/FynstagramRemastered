@@ -8,28 +8,29 @@ import java.util.ArrayList;
 public class Punkt extends Knoten {
     private final int x;
     private final int y;
-    public final Bild bigImg=new Bild("Assets/Map/Minimap/HauptPunktKlein.png");
-    public final Bild smallImg=new Bild("Assets/Map/Minimap/HauptPunktKlein.png");
+    Bild bigImg=new Bild("Assets/Map/Minimap/HauptPunktKlein.png");
+    Bild smallImg=new Bild("Assets/Map/Minimap/HauptPunktKlein.png");
 
 
     public Punkt(int x, int y) {
         this.x = x;
         this.y = y;
     }
-    public void update(int playerX,int playerY, int mapMinimapRatio, int minimapX,int minimapY, int minimapRadius){
-        int distance=(int)Math.round(Math.sqrt(Math.pow(playerX-x,2)+Math.pow(playerY-y,2)));
+    public void update(int playerX,int playerY, int mapMinimapRatio, int minimapCenterX,int minimapCenterY, int minimapRadius){
+        int distance=(int)Math.sqrt((x-playerX)*(x-playerX)+(y-playerY)*(y-playerY));
         ea.Punkt p;
         boolean isInside=false;
-        if(minimapRadius<distance/mapMinimapRatio){
-            p=new ea.Punkt(minimapX+(x-playerX)/distance*minimapRadius,
-                    minimapY+(y-playerY)/distance*minimapRadius);
+        if(mapMinimapRatio<distance){
+            p=new ea.Punkt(minimapCenterX+(x-playerX)*minimapRadius/distance,
+                    minimapCenterY+(y-playerY)*minimapRadius/distance);
         }
         else{
-            p=new ea.Punkt(minimapX+(x-playerX)/mapMinimapRatio,
-                    minimapY+(y-playerY)/mapMinimapRatio);
+            p=new ea.Punkt(minimapCenterX+(x-playerX)*minimapRadius/mapMinimapRatio,
+                    minimapCenterY+(y-playerY)*minimapRadius/mapMinimapRatio);
             isInside=true;
         }
-        smallImg.positionSetzen(p);
+        smallImg.mittelpunktSetzen(p);
+        bigImg.mittelpunktSetzen(p);
 
         bigImg.sichtbarSetzen(isInside);
         smallImg.sichtbarSetzen(!isInside);
